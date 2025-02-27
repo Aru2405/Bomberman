@@ -24,7 +24,12 @@ public class bomberman {
 
     // Método para poner una bomba
     public void ponerBomba() {
-        System.out.println("Bomba colocada en: (" + x + ", " + y + ")");
+    	System.out.println("Bomba colocada en: (" + x + ", " + y + ")");
+        bomba nuevaBomba = new bomba(this.x, this.y);
+      //metodo para agrgarla a la casilla del tablero que no existe
+        nuevaBomba.iniciarTemporizador(); //
+        
+      
     }
 
     // Método para morir
