@@ -1,14 +1,21 @@
-package modelo;
+package Modelo;
 
 public class Tablero {
-	private int filas;
-	private int columnas;
+	private int filas=11;
+	private int columnas=17;
 	private Casilla[][]celdas;
+	private static Tablero miTablero;
 	
-	public Tablero(int filas, int columnas) {
-        this.filas = filas;
-        this.columnas = columnas;
+	private Tablero() {
         this.celdas = new Casilla[filas][columnas];
+    }
+	
+	public static Tablero getTablero(){
+        if (miTablero == null) {
+            miTablero = new Tablero();
+        }
+        return miTablero;
+        
     }
 	
 	private void inicializarTablero() {
@@ -38,4 +45,22 @@ public class Tablero {
             System.out.println();
         }
     }
+	
+	public void agregarBomba(bomba nuevaBomba) {
+	    int x = nuevaBomba.getX();
+	    int y = nuevaBomba.getX();
+	    //añadirla a la casilla
+
+	}
+
+	public void procesarExplosión(int[][] posiciones) {
+	    for (int[] pos : posiciones) {
+	        int x = pos[0];
+	        int y = pos[1];
+	        
+	        //coger cada casilla del radio de explosion y mirar que hay dentro y hacer lo que toque
+
+	    }
+	}
+
 }
