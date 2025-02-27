@@ -1,4 +1,4 @@
-package modelo;
+package Modelo;
 
 public class Partida {
 	private Tablero tablero;
@@ -6,7 +6,7 @@ public class Partida {
     private boolean juegoActivo;
 
     public Partida(int filas, int columnas) {
-    	this.tablero= new Tablero(filas, columnas);
+    	this.tablero= tablero.getTablero();
     	this.nivel=1;
     	this.juegoActivo=true;
     }
