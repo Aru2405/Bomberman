@@ -3,13 +3,13 @@ package Modelo;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class bomba{
+public class Bomba{
 	
     private int x;
     private int y;
     private int radio=1;
 
-    public bomba(int x, int y){
+    public Bomba(int x, int y){
         this.x = x;
         this.y = y; 
        
