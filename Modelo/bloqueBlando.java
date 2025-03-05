@@ -1,6 +1,6 @@
 package Modelo;
 
-public class bloqueBlando {
+public class BloqueBlando {
     public boolean esDestructible(){
         return true;
         
