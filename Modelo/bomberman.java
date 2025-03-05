@@ -1,10 +1,10 @@
 package Modelo;
 
-public class bomberman {
+public class Bomberman {
     private int x, y;
 
     
-    public bomberman(int x, int y) {
+    public Bomberman(int x, int y) {
         this.x = x;
         this.y = y;
     }
