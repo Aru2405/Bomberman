@@ -2,11 +2,13 @@ package Modelo;
 
 public class Bomberman {
     private int x, y;
+    private boolean vida;
 
     
-    public Bomberman(int x, int y) {
+    public Bomberman(int x, int y,boolean vida) {
         this.x = x;
         this.y = y;
+        this.vida=vida
     }
 
     // Método para mover a Bomberman
@@ -36,5 +38,10 @@ public class Bomberman {
     public void morir() {
         System.out.println("Bomberman ha muerto");
     }
-
+    public boolean estaVivo() {
+    	if (vida) {
+    		return true;
+        }else
+        	return false;
+     }
 }
