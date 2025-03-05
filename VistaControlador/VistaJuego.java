@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
 import Modelo.Bomberman;
+import Modelo.Casilla;
 import Modelo.Tablero;
 
 @SuppressWarnings({ "deprecation", "serial" })
@@ -58,19 +59,23 @@ public class VistaJuego extends JFrame implements Observer {
     }
 
     private void actualizarVista() {
-        int[][] estadoTablero = controlador.getEstadoTablero(); 
-        int[] bombermanPos = controlador.getPosicionBomberman(); 
+        Casilla[][] estadoTablero = controlador.getEstadoTablero(); // Ahora devuelve Casilla[][]
+        int[] bombermanPos = controlador.getPosicionBomberman();
 
         for (int i = 0; i < estadoTablero.length; i++) {
             for (int j = 0; j < estadoTablero[i].length; j++) {
                 if (i == bombermanPos[0] && j == bombermanPos[1]) {
                     celdas[i][j].setIcon(bombermanIcon); // Mostrar la imagen del bomberman
                 } else {
-                    switch (estadoTablero[i][j]) {
-                        case 0: celdas[i][j].setIcon(null); break; 
-                        case 2: celdas[i][j].setIcon(bloqueDuroIcon); break;
-                        case 3: celdas[i][j].setIcon(bloqueBlandoIcon); break;
-                        case 4: celdas[i][j].setIcon(bombaIcon); break;
+                    Casilla casilla = estadoTablero[i][j];
+                    if (casilla.tieneBomba()) {
+                        celdas[i][j].setIcon(bombaIcon);
+                    } else if (casilla.tieneBloqueDuro()) {
+                        celdas[i][j].setIcon(bloqueDuroIcon);
+                    } else if (casilla.tieneBloqueBlando()) {
+                        celdas[i][j].setIcon(bloqueBlandoIcon);
+                    } else {
+                        celdas[i][j].setIcon(null);
                     }
                 }
             }
@@ -119,7 +124,7 @@ public class VistaJuego extends JFrame implements Observer {
         }
 
         public int[][] getEstadoTablero(){
-            return tablero.getMapa(); 
+            return tablero.getCasilla(); 
         }
 
         public int[] getPosicionBomberman(){
@@ -135,19 +140,19 @@ public class VistaJuego extends JFrame implements Observer {
             int key = e.getKeyCode();
             switch (key) {
                 case KeyEvent.VK_UP:
-                    bomberman.mover(-1, 0);
+                    bomberman.moverse(-1, 0);
                     break;
                 case KeyEvent.VK_DOWN:
-                    bomberman.mover(1, 0);
+                    bomberman.moverse(1, 0);
                     break;
                 case KeyEvent.VK_LEFT:
-                    bomberman.mover(0, -1);
+                    bomberman.moverse(0, -1);
                     break;
                 case KeyEvent.VK_RIGHT:
-                    bomberman.mover(0, 1);
+                    bomberman.moverse(0, 1);
                     break;
                 case KeyEvent.VK_SPACE:
-                    bomberman.plantarBomba();
+                    bomberman.ponerBomba();
                     break;
             }
             tablero.notificarCambio();
@@ -173,4 +178,3 @@ public class VistaJuego extends JFrame implements Observer {
 		}
     }
 }
-
