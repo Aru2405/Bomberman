@@ -123,8 +123,8 @@ public class VistaJuego extends JFrame implements Observer {
             return miControladorBomberman;
         }
 
-        public int[][] getEstadoTablero(){
-            return tablero.getCasilla(); 
+        public Casilla[][] getCasillas() {
+            return celdas; // Devuelve la matriz completa
         }
 
         public int[] getPosicionBomberman(){
