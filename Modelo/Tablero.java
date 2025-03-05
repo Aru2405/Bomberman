@@ -62,5 +62,9 @@ public class Tablero {
 
 	    }
 	}
+	    public void notificarCambio(){
+        setChanged();
+        notifyObservers();
+    }
 
 }
