@@ -1,20 +1,41 @@
 package Modelo;
 
 public class Bomberman {
-    private int x, y;
-    private boolean vida;
-
-    
-    public Bomberman(int x, int y,boolean vida) {
+	
+    private int x;
+    private int y;
+   
+    public Bomberman(int x, int y) {
         this.x = x;
         this.y = y;
-        this.vida=vida
+        
     }
 
-    // Método para mover a Bomberman
     public void moverse(int dx, int dy) {
-        this.x += dx;
-        this.y += dy;
+        int nuevaX = this.x + dx;
+        int nuevaY = this.y + dy;
+        
+        Tablero tablero = Tablero.getTablero();
+
+        //Verificar si la nueva posicion esta dentro del tablero
+        if (!tablero.esValida(nuevaX, nuevaY)) {
+            System.out.println("Bomberman no puede salir del tablero.");
+            return;
+        }
+
+        //Verificar si la nueva casilla tiene un bloque
+        Casilla casillaDestino = tablero.getCasilla(nuevaX, nuevaY);
+        if (casillaDestino.tieneBloqueDuro() || casillaDestino.tieneBloqueBlando()) {
+            System.out.println("Hay un bloque en (" + nuevaX + ", " + nuevaY + ").");
+            return;
+        }
+
+   
+        this.x = nuevaX;
+        this.y = nuevaY;
+        System.out.println("Bomberman se ha movido a (" + x + ", " + y + ").");
+        tablero.actualizarPosicionBomberman(x, y);
+
     }
     public int getX() {
         return x;
@@ -24,24 +45,25 @@ public class Bomberman {
         return y;
     }
 
-    // Método para poner una bomba
+
     public void ponerBomba() {
-    	System.out.println("Bomba colocada en: (" + x + ", " + y + ")");
-        bomba nuevaBomba = new bomba(this.x, this.y);
-      //metodo para agrgarla a la casilla del tablero que no existe
-        nuevaBomba.iniciarTemporizador(); //
+        Tablero tablero = Tablero.getTablero();
+        Casilla casillaActual = tablero.getCasilla(this.x, this.y);
+         System.out.println("Bomba colocada en: (" + x + ", " + y + ")");
+         Bomba nuevaBomba = new Bomba(this.x, this.y);
+         casillaActual.colocarBomba(nuevaBomba); 
+         nuevaBomba.iniciarTemporizador();
+
+         
         
-      
+        
     }
 
-    // Método para morir
+
     public void morir() {
-        System.out.println("Bomberman ha muerto");
+        System.out.println("Bomberman ha muerto.");
+        Partida.getPartida().terminarJuego();
     }
-    public boolean estaVivo() {
-    	if (vida) {
-    		return true;
-        }else
-        	return false;
-     }
+
+
 }
