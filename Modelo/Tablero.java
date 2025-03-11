@@ -125,8 +125,21 @@ public class Tablero {
                 }
             }
         }
+   public Bomberman getBomberman() {
+        for (int i = 0; i < celdas.length; i++) {
+            for (int j = 0; j < celdas[i].length; j++) {
+                if (celdas[i][j].tieneBomberman()) {
+                    return celdas[i][j].getBomberman();
+                }
+            }
+        }
+        return null; // Si no se encuentra al Bomberman
+    }
 
-        System.out.println("Explosion completada.");
+  
+    public void notificarCambio(){
+        setChanged();
+        notifyObservers();
    
 
     }
