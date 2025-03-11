@@ -4,10 +4,12 @@ public class Bomberman {
 	
     private int x;
     private int y;
+    private boolean vida;
    
     public Bomberman(int x, int y) {
         this.x = x;
         this.y = y;
+	this.vida = vida;
         
     }
 
@@ -61,9 +63,14 @@ public class Bomberman {
 
 
     public void morir() {
+	vida= false;
         System.out.println("Bomberman ha muerto.");
         Partida.getPartida().terminarJuego();
     }
+    public boolean estaVivo(){
+	return vida;
+    }
+
 
 
 }
