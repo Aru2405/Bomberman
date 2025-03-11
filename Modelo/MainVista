@@ -1,0 +1,10 @@
+package Modelo;
+
+import VistaControlador.VistaJuego;
+
+public class MainVista {
+    public static void mainVista(String[] args){
+    	new VistaJuego(11,17);
+      
+    }
+}
