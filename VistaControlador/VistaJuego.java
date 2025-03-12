@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 import Modelo.Bomberman;
@@ -23,12 +24,16 @@ public class VistaJuego extends JFrame implements Observer {
     private ImageIcon bombermanIcon = new ImageIcon(getClass().getResource("/Sprites/bomber1.png"));
     
     public VistaJuego(int filas, int columnas) {
-        controlador = ControladorBomberman.getControladorBomberman(); 
-        controlador.addObserver(this); 
+        controlador = ControladorBomberman.getControladorBomberman();
+        Tablero.getTablero().addObserver(this); //??????????????
         initialize(filas, columnas);
-        addKeyListener(controlador); 
+        this.addKeyListener(controlador);
         setFocusable(true);
-        requestFocus();
+        requestFocusInWindow();
+        
+        
+        SwingUtilities.invokeLater(() -> this.requestFocusInWindow());
+        System.out.println("KeyListener registrado: " + Arrays.toString(this.getKeyListeners()));
     }
     
     private void initialize(int filas, int columnas) {
@@ -59,13 +64,13 @@ public class VistaJuego extends JFrame implements Observer {
     }
 
     private void actualizarVista() {
-        Casilla[][] estadoTablero = controlador.getEstadoTablero(); // Ahora devuelve Casilla[][]
+        Casilla[][] estadoTablero = controlador.getEstadoTablero(); 
         int[] bombermanPos = controlador.getPosicionBomberman();
 
         for (int i = 0; i < estadoTablero.length; i++) {
             for (int j = 0; j < estadoTablero[i].length; j++) {
                 if (i == bombermanPos[0] && j == bombermanPos[1]) {
-                    celdas[i][j].setIcon(bombermanIcon); // Mostrar la imagen del bomberman
+                    celdas[i][j].setIcon(bombermanIcon); 
                 } else {
                     Casilla casilla = estadoTablero[i][j];
                     if (casilla.tieneBomba()) {
@@ -101,80 +106,64 @@ public class VistaJuego extends JFrame implements Observer {
     }
     @Override
     public void update(Observable o, Object arg) {
+
         actualizarVista();
     }
     
-    private static class ControladorBomberman extends Observable implements KeyListener, Observer{
-    	
+    private static class ControladorBomberman implements KeyListener {
         private static ControladorBomberman miControladorBomberman;
-        private Bomberman bomberman;
         private Tablero tablero;
+        private Bomberman bomberman;
 
-        private ControladorBomberman(){
+        private ControladorBomberman() {
             this.tablero = Tablero.getTablero();
-            this.bomberman = tablero.getBomberman(); // Usar la instancia del Tablero
-            tablero.addObserver(this);
+            this.bomberman = tablero.getBomberman();
         }
 
-        public static synchronized ControladorBomberman getControladorBomberman(){
-            if (miControladorBomberman == null){
-            	miControladorBomberman = new ControladorBomberman();
+        public static synchronized ControladorBomberman getControladorBomberman() {
+            if (miControladorBomberman == null) {
+                miControladorBomberman = new ControladorBomberman();
             }
             return miControladorBomberman;
         }
-
-        public Casilla[][] getCasillas() {
-            return celdas; // Devuelve la matriz completa
+        
+        public Casilla[][] getEstadoTablero() {
+            return tablero.getCeldas();
         }
+        
 
-        public int[] getPosicionBomberman(){
-            return new int[]{bomberman.getX(), bomberman.getY()}; 
+
+        public int[] getPosicionBomberman() {
+            return new int[]{bomberman.getX(), bomberman.getY()};
         }
 
         @Override
-        public void keyPressed(KeyEvent e){
+        public void keyPressed(KeyEvent e) {
+
             if (!bomberman.estaVivo()) {
-            	return; 
-            } 
+                System.out.println("murio");
+
+
+            	}
 
             int key = e.getKeyCode();
             switch (key) {
-                case KeyEvent.VK_UP:
-                    bomberman.moverse(-1, 0);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    bomberman.moverse(1, 0);
-                    break;
-                case KeyEvent.VK_LEFT:
-                    bomberman.moverse(0, -1);
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    bomberman.moverse(0, 1);
-                    break;
-                case KeyEvent.VK_SPACE:
-                    bomberman.ponerBomba();
-                    break;
+                case KeyEvent.VK_UP -> bomberman.moverse(-1, 0);
+                case KeyEvent.VK_DOWN -> bomberman.moverse(1, 0);
+                case KeyEvent.VK_LEFT -> bomberman.moverse(0, -1);
+                case KeyEvent.VK_RIGHT -> bomberman.moverse(0, 1);
+                case KeyEvent.VK_SPACE -> bomberman.ponerBomba();
             }
-            tablero.notificarCambio();
-            setChanged();
-            notifyObservers(); 
+            tablero.notificarCambio(); 
+
         }
 
         @Override
-        public void keyReleased(KeyEvent e){
-        	
-        }
+        public void keyReleased(KeyEvent e) {}
 
         @Override
-        public void keyTyped(KeyEvent e){
-        	
-        }
-
-		@Override
-		public void update(Observable o, Object arg){
-	        setChanged();
-	        notifyObservers(); 
-			
-		}
+        public void keyTyped(KeyEvent e) {}
     }
+
+		
 }
