@@ -5,13 +5,11 @@ public class Casilla{
     private Bomba bomba;
     private BloqueBlando bloqueBlando;
     private BloqueDuro bloqueDuro;
-    private Bomberman bomberman;
 
     public Casilla() {
         this.bomba = null;
         this.bloqueBlando = null;
         this.bloqueDuro = null;
-        this.bomberman=null;
     }
 
     public void colocarBomba(Bomba b){
@@ -59,21 +57,6 @@ public class Casilla{
     public boolean tieneBloqueDuro(){
         return bloqueDuro != null;
     }
-    
-    public void colocarBomberman(Bomberman b) {
-        this.bomberman = b;
-    }
-
-    public void eliminarBomberman() {
-        this.bomberman = null;
-    }
-
-    public boolean tieneBomberman() {
-        return this.bomberman != null;
-    }
-    public Bomberman getBomberman() {
-        return this.bomberman;
-    }
 
 
     @Override
@@ -87,4 +70,6 @@ public class Casilla{
         }
         return "[ ]";
     }
+
+
 }
