@@ -25,7 +25,7 @@ public class VistaJuego extends JFrame implements Observer {
     
     public VistaJuego(int filas, int columnas) {
         controlador = ControladorBomberman.getControladorBomberman();
-        Tablero.getTablero().addObserver(this); //??????????????
+        Tablero.getTablero().addObserver(this);
         initialize(filas, columnas);
         this.addKeyListener(controlador);
         setFocusable(true);
