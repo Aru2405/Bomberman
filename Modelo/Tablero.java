@@ -1,8 +1,11 @@
 package Modelo;
 
 import java.util.Random;
+import java.util.Observable;
+import java.util.Random;
 
-public class Tablero {
+
+public class Tablero extends Observable{
 	
     private int filas = 11;
     private int columnas = 17;
@@ -10,8 +13,10 @@ public class Tablero {
     private static Tablero miTablero;
     private int bombermanX = 0;
     private int bombermanY = 0;
+    private Bomberman bomberman = new Bomberman(0, 0);
+
     
-    private Tablero(){
+    private Tablero() {
         this.celdas = new Casilla[filas][columnas];
         inicializarTablero();
     }
@@ -62,10 +67,6 @@ public class Tablero {
         return null;
     }
 
-     public Casilla[][] getCasillas(){
-    	return celdas;
-    }
-
     public boolean esValida(int x, int y){
     	
         return x >= 0 && y >= 0 && x < filas && y < columnas;
@@ -92,6 +93,7 @@ public class Tablero {
     	
         this.bombermanX = x;
         this.bombermanY = y;
+
         
     }
 
@@ -129,25 +131,30 @@ public class Tablero {
                 }
             }
         }
-   public Bomberman getBomberman() {
-        for (int i = 0; i < celdas.length; i++) {
-            for (int j = 0; j < celdas[i].length; j++) {
-                if (celdas[i][j].tieneBomberman()) {
-                    return celdas[i][j].getBomberman();
-                }
-            }
-        }
-        return null; // Si no se encuentra al Bomberman
-    }
 
-  
-    public void notificarCambio(){
-        setChanged();
-        notifyObservers();
+        System.out.println("Explosion completada.");
+        
    
 
     }
     
-   
+    public Casilla[][] getCeldas() {
+        return celdas; // Devuelve la matriz completa
+    }
+    
+
+
+    public Bomberman getBomberman() {
+        return bomberman; // Devuelve la misma instancia siempre
+    }
+    
+    public void notificarCambio() {
+        setChanged();  // 📌 Marcar que hubo cambios
+        notifyObservers();  // 📌 Notificar a las vistas (Observer)
+    }
+
+
+    
+
 
 }
