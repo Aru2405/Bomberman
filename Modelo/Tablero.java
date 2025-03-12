@@ -1,9 +1,9 @@
 package Modelo;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Observable;
-import java.util.Random;
-
 
 public class Tablero extends Observable{
 	
@@ -14,6 +14,7 @@ public class Tablero extends Observable{
     private int bombermanX = 0;
     private int bombermanY = 0;
     private Bomberman bomberman = new Bomberman(0, 0);
+    private Timer timer = new Timer();
 
     
     private Tablero() {
@@ -100,48 +101,64 @@ public class Tablero extends Observable{
 
 
     public void manejarExplosion(int x, int y) {
-        System.out.println("Procesando explosion en (" + x + ", " + y + ")");
-
+        System.out.println("Procesando explosión en (" + x + ", " + y + ")");
         int[][] direcciones = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {0, 0}}; 
 
         for (int[] dir : direcciones) {
             int nuevaX = x + dir[0];
             int nuevaY = y + dir[1];
 
-            if (!esValida(nuevaX, nuevaY)) {}
-            else{
-            	Casilla afectada = getCasilla(nuevaX, nuevaY);
-            	if (afectada.tieneBloqueBlando()){
-            		afectada.destruirBloqueBlando();
-            	} 
+            if (!esValida(nuevaX, nuevaY)) continue;
             
-            	if (afectada.tieneBomba()) {
-            		boolean tiene = afectada.tieneBomba();
-            		if (tiene == true) {                        
-            			afectada.detonarBomba(); 
-            			
-            		}
-            	}
-                if (bombermanX == nuevaX && bombermanY == nuevaY){
-                    System.out.println("Bomberman ha sido alcanzado por la explosion en (" + bombermanX + ", " + bombermanY + ")");
-                    Partida.getPartida().terminarJuego();
-                    return;
-                    
-                    
-                }
+            Casilla afectada = getCasilla(nuevaX, nuevaY);
+            
+            // Si la casilla tiene una bomba, inicia su explosión
+            if (afectada.tieneBomba()) {
+                afectada.iniciarExplosion(); // 🔥 Marcar la casilla como en explosión
+            }
+
+            if (afectada.tieneBloqueBlando()) {
+                afectada.destruirBloqueBlando();
+            }
+
+            if (bombermanX == nuevaX && bombermanY == nuevaY) {
+                System.out.println("Bomberman ha sido alcanzado por la explosión!");
+                Partida.getPartida().terminarJuego();
             }
         }
         notificarCambio();
-        System.out.println("Explosion completada.");
-        
-   
+
+        this.timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                for (int[] dir : direcciones) {
+                    int nuevaX = x + dir[0];
+                    int nuevaY = y + dir[1];
+                    if (esValida(nuevaX, nuevaY)) {
+                        getCasilla(nuevaX, nuevaY).finalizarExplosion();
+                    }
+                }
+                notificarCambio();
+            }
+        }, 500);
 
     }
+
     
     public Casilla[][] getCeldas() {
-        return celdas; 
+        return celdas;
     }
     
+    public void eliminarBomba(int x, int y) {
+        if (esValida(x, y)) {
+            Casilla casilla = getCasilla(x, y);
+            if (casilla.tieneBomba()) {
+                casilla.detonarBomba(); // 🔥 Asegura que la bomba se elimina correctamente
+                notificarCambio(); // 🔄 Refrescar la vista
+            }
+        }
+    }
+
 
 
     public Bomberman getBomberman() {
@@ -149,11 +166,10 @@ public class Tablero extends Observable{
     }
     
     public void notificarCambio() {
-        setChanged(); 
-        notifyObservers();  
+        setChanged();  
+        notifyObservers(); 
+
     }
-
-
     
 
 
