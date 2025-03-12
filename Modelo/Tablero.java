@@ -62,6 +62,10 @@ public class Tablero {
         return null;
     }
 
+     public Casilla[][] getCasillas(){
+    	return celdas;
+    }
+
     public boolean esValida(int x, int y){
     	
         return x >= 0 && y >= 0 && x < filas && y < columnas;
