@@ -3,8 +3,10 @@ package Modelo;
 import VistaControlador.VistaJuego;
 
 public class MainVista {
-    public static void mainVista(String[] args){
-    	new VistaJuego(11,17);
-      
+    public static void main(String[] args) {
+        // Ejecutar la interfaz en el hilo de eventos de Swing
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            new VistaJuego(11, 17);
+        });
     }
 }
