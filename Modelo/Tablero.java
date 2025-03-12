@@ -131,7 +131,7 @@ public class Tablero extends Observable{
                 }
             }
         }
-
+        notificarCambio();
         System.out.println("Explosion completada.");
         
    
