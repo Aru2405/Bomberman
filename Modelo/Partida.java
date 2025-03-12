@@ -35,6 +35,8 @@ public class Partida {
     public void terminarJuego(){
         this.juegoActivo = false;
         System.out.println("El juego ha terminado.");
+        System.exit(0);
+
     }
     
     public boolean estaActivo(){
