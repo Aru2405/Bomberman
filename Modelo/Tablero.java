@@ -139,18 +139,18 @@ public class Tablero extends Observable{
     }
     
     public Casilla[][] getCeldas() {
-        return celdas; 
+        return celdas; // Devuelve la matriz completa
     }
     
 
 
     public Bomberman getBomberman() {
-        return bomberman; 
+        return bomberman; // Devuelve la misma instancia siempre
     }
     
     public void notificarCambio() {
-        setChanged();  
-        notifyObservers();  
+        setChanged();  // 📌 Marcar que hubo cambios
+        notifyObservers();  // 📌 Notificar a las vistas (Observer)
     }
 
 
