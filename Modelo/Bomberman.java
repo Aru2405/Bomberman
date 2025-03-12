@@ -5,40 +5,45 @@ public class Bomberman {
     private int x;
     private int y;
     private boolean vida;
+
    
     public Bomberman(int x, int y) {
         this.x = x;
         this.y = y;
-	this.vida = vida;
+        this.vida = true;
+
         
     }
-
+    
     public void moverse(int dx, int dy) {
         int nuevaX = this.x + dx;
         int nuevaY = this.y + dy;
-        
+
         Tablero tablero = Tablero.getTablero();
 
-        //Verificar si la nueva posicion esta dentro del tablero
+        // 📌 Verificar si la nueva posición está dentro del tablero
         if (!tablero.esValida(nuevaX, nuevaY)) {
-            System.out.println("Bomberman no puede salir del tablero.");
+            System.out.println("Movimiento inválido: fuera del tablero.");
             return;
         }
 
-        //Verificar si la nueva casilla tiene un bloque
+        // 📌 Verificar si la nueva casilla tiene un obstáculo
         Casilla casillaDestino = tablero.getCasilla(nuevaX, nuevaY);
         if (casillaDestino.tieneBloqueDuro() || casillaDestino.tieneBloqueBlando()) {
-            System.out.println("Hay un bloque en (" + nuevaX + ", " + nuevaY + ").");
+            System.out.println("¡Movimiento bloqueado! Hay un obstáculo en (" + nuevaX + ", " + nuevaY + ").");
             return;
         }
 
-   
+        // 📌 Si la casilla está libre, mover a Bomberman y actualizar Tablero
         this.x = nuevaX;
         this.y = nuevaY;
         System.out.println("Bomberman se ha movido a (" + x + ", " + y + ").");
-        tablero.actualizarPosicionBomberman(x, y);
 
+        // 📌 Notificar el cambio en la posición
+        tablero.actualizarPosicionBomberman(x, y);
+        tablero.notificarCambio(); // 🚀 Notificar a la vista
     }
+
     public int getX() {
         return x;
     }
@@ -63,14 +68,15 @@ public class Bomberman {
 
 
     public void morir() {
-	vida= false;
+    	vida= false;
         System.out.println("Bomberman ha muerto.");
         Partida.getPartida().terminarJuego();
     }
+    
     public boolean estaVivo(){
-	return vida;
+    	return vida;
     }
-
+   
 
 
 }
