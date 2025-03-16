@@ -11,8 +11,6 @@ public class Tablero extends Observable{
     private int columnas = 17;
     private Casilla[][] celdas;
     private static Tablero miTablero;
-    private int bombermanX = 0;
-    private int bombermanY = 0;
     private Bomberman bomberman = new Bomberman(0, 0);
     private Timer timer = new Timer();
 
@@ -78,7 +76,7 @@ public class Tablero extends Observable{
         	
             for (int j = 0; j < columnas; j++){
     
-                if (i == this.bombermanX && j == this.bombermanY){
+                if (i == bomberman.getX() && j == bomberman.getY()){
                 	
                     System.out.print("[B] ");
                 } else {
@@ -90,13 +88,6 @@ public class Tablero extends Observable{
         }
     }
     
-    public void actualizarPosicionBomberman(int x, int y){
-    	
-        this.bombermanX = x;
-        this.bombermanY = y;
-
-        
-    }
 
 
 
@@ -112,7 +103,7 @@ public class Tablero extends Observable{
             
             Casilla afectada = getCasilla(nuevaX, nuevaY);
             
-            // Si la casilla tiene una bomba, inicia su explosión
+          
             if (afectada.tieneBomba()) {
                 afectada.iniciarExplosion(); 
             }
@@ -121,7 +112,7 @@ public class Tablero extends Observable{
                 afectada.destruirBloqueBlando();
             }
 
-            if (bombermanX == nuevaX && bombermanY == nuevaY) {
+            if (bomberman.getX() == nuevaX && bomberman.getY() == nuevaY) {
                 System.out.println("Bomberman ha sido alcanzado por la explosión!");
                 Partida.getPartida().terminarJuego();
             }
@@ -154,7 +145,7 @@ public class Tablero extends Observable{
             Casilla casilla = getCasilla(x, y);
             if (casilla.tieneBomba()) {
                 casilla.detonarBomba(); 
-                notificarCambio(); 
+                notificarCambio(); // 
             }
         }
     }
