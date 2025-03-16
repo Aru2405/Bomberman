@@ -73,12 +73,12 @@ public class VistaJuego extends JFrame implements Observer {
         Tablero.getTablero().addObserver(this);
         initialize(filas, columnas);
 
-        this.addKeyListener(controlador); // Asegurar que el KeyListener está registrado
+        this.addKeyListener(controlador); 
         setFocusable(true);
-        requestFocus(); // Forzar foco en la ventana
-        requestFocusInWindow(); // Refuerzo adicional
+        requestFocus(); 
+        requestFocusInWindow(); 
 
-        SwingUtilities.invokeLater(() -> this.requestFocusInWindow()); // Forzar foco tras iniciar
+        SwingUtilities.invokeLater(() -> this.requestFocusInWindow()); 
         System.out.println("KeyListener registrado: " + Arrays.toString(this.getKeyListeners()));
     }
     
@@ -105,7 +105,7 @@ public class VistaJuego extends JFrame implements Observer {
             }
         }
 
-        actualizarVista(); // Llamamos al método después de la inicialización
+        actualizarVista(); 
         setVisible(true);
     }
 
@@ -113,10 +113,10 @@ public class VistaJuego extends JFrame implements Observer {
     private void actualizarVista() {
         Casilla[][] estadoTablero = controlador.getEstadoTablero(); 
         int[] bombermanPos = controlador.getPosicionBomberman();
-        String direccion = controlador.getUltimaDireccion(); // Obtener dirección actual
-        int frame = controlador.getFrameBomberman(); // Frame para la animación
-        boolean colocandoBomba = controlador.estaColocandoBomba(); // Saber si está poniendo una bomba
-        int frameExplosion = controlador.getFrameExplosion(); // Obtener frame de la explosión
+        String direccion = controlador.getUltimaDireccion(); //Obtener dirección actual
+        int frame = controlador.getFrameBomberman(); //Frame para la animación
+        boolean colocandoBomba = controlador.estaColocandoBomba(); //Saber si está poniendo una bomba
+        int frameExplosion = controlador.getFrameExplosion(); //Obtener frame de la explosión
 
         for (int i = 0; i < estadoTablero.length; i++) {
             for (int j = 0; j < estadoTablero[i].length; j++) {
@@ -138,7 +138,7 @@ public class VistaJuego extends JFrame implements Observer {
                 }
                 // Si hay una bomba en la casilla
                 else if (casilla.tieneBomba()) {
-                    if (casilla.bombaEstaExplotando()) { // Si la bomba está explotando
+                    if (casilla.bombaEstaExplotando()) { //Si la bomba está explotando
                         celdas[i][j].setIcon(explosionBomnba[frameExplosion % explosionBomnba.length]);
                     } else {
                         celdas[i][j].setIcon(bomba1);
@@ -177,7 +177,6 @@ public class VistaJuego extends JFrame implements Observer {
     }
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("Vista actualizada"); // 👈 DEBUG: Ver si esto se imprime en consola
         actualizarVista();
     }
 
@@ -188,14 +187,14 @@ public class VistaJuego extends JFrame implements Observer {
         private Bomberman bomberman;
         private int frameBomberman = 0;
         private int frameExplosion = 0;
-        private String ultimaDireccion = "abajo"; // Por defecto mirando abajo
+        private String ultimaDireccion = "abajo"; //Por defecto mirando abajo
         private boolean colocandoBomba = false; 
 
-        public boolean estaColocandoBomba() {  // 👈 Método necesario
+        public boolean estaColocandoBomba() {  
             return colocandoBomba;
         }
 
-        public int getFrameExplosion() {  // 👈 Método necesario
+        public int getFrameExplosion() {  
             return frameExplosion;
         }
         private ControladorBomberman() {
