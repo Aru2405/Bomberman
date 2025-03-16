@@ -114,7 +114,7 @@ public class Tablero extends Observable{
             
             // Si la casilla tiene una bomba, inicia su explosión
             if (afectada.tieneBomba()) {
-                afectada.iniciarExplosion(); // 🔥 Marcar la casilla como en explosión
+                afectada.iniciarExplosion(); 
             }
 
             if (afectada.tieneBloqueBlando()) {
@@ -153,8 +153,8 @@ public class Tablero extends Observable{
         if (esValida(x, y)) {
             Casilla casilla = getCasilla(x, y);
             if (casilla.tieneBomba()) {
-                casilla.detonarBomba(); // 🔥 Asegura que la bomba se elimina correctamente
-                notificarCambio(); // 🔄 Refrescar la vista
+                casilla.detonarBomba(); 
+                notificarCambio(); 
             }
         }
     }
