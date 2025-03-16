@@ -15,7 +15,7 @@ public class Bomba {
     }    
 
     public boolean estaExplotando() {
-        return enExplosion;
+        return enExplosion; 
     }
 
     public void iniciarExplosion() {
@@ -27,15 +27,13 @@ public class Bomba {
     }
         
     public void iniciarTemporizador() {
-        System.out.println("⏳ Temporizador iniciado en (" + x + ", " + y + ")");
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("💥 Bomba explota en (" + x + ", " + y + ")");
                 Tablero.getTablero().manejarExplosion(x, y);
-                animarExplosion(); // 🔥 Iniciar la animación de explosión
+                animarExplosion(); 
             }
-        }, 3000); // Explota después de 3 segundos
+        }, 3000); 
     }
 
     public int getX() {
@@ -48,7 +46,6 @@ public class Bomba {
     
     public void animarExplosion() {
         enExplosion = true;
-        System.out.println("🎇 Animando explosión en (" + x + ", " + y + ")");
 
         Timer explosionTimer = new Timer();
         explosionTimer.schedule(new TimerTask() {
@@ -56,16 +53,16 @@ public class Bomba {
 
             @Override
             public void run() {
-                if (frame >= 5) { // 🔥 5 frames (500ms), luego eliminar la bomba
+                if (frame >= 5) { 
                     finalizarExplosion();
-                    System.out.println("❌ Eliminando bomba en (" + x + ", " + y + ")");
+                
                     Tablero.getTablero().eliminarBomba(x, y);
                     explosionTimer.cancel();
                 } else {
-                    frame++; // Avanza la animación
-                    Tablero.getTablero().notificarCambio(); // Refrescar vista
+                    frame++; 
+                    Tablero.getTablero().notificarCambio(); 
                 }
             }
-        }, 0, 100); // Se ejecuta cada 100ms por 5 frames
+        }, 0, 100); 
     }
 }
