@@ -21,27 +21,21 @@ public class Bomberman {
 
         Tablero tablero = Tablero.getTablero();
 
-        // 📌 Verificar si la nueva posición está dentro del tablero
+        //Verificar si la nueva posición está dentro del tablero
         if (!tablero.esValida(nuevaX, nuevaY)) {
-            System.out.println("Movimiento inválido: fuera del tablero.");
             return;
         }
 
-        // 📌 Verificar si la nueva casilla tiene un obstáculo
+        // Verificar si la nueva casilla tiene un obstáculo
         Casilla casillaDestino = tablero.getCasilla(nuevaX, nuevaY);
         if (casillaDestino.tieneBloqueDuro() || casillaDestino.tieneBloqueBlando()) {
-            System.out.println("¡Movimiento bloqueado! Hay un obstáculo en (" + nuevaX + ", " + nuevaY + ").");
             return;
         }
 
-        // 📌 Si la casilla está libre, mover a Bomberman y actualizar Tablero
+        //Si la casilla está libre, mover a Bomberman y actualizar Tablero
         this.x = nuevaX;
         this.y = nuevaY;
-        System.out.println("Bomberman se ha movido a (" + x + ", " + y + ").");
-
-        // 📌 Notificar el cambio en la posición
-        tablero.actualizarPosicionBomberman(x, y);
-        tablero.notificarCambio(); // 🚀 Notificar a la vista
+        tablero.notificarCambio();
     }
 
     public int getX() {
