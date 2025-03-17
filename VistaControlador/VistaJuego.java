@@ -1,5 +1,4 @@
-package VistaControlador; 
-
+package VistaControlador;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +15,7 @@ import Modelo.Tablero;
 public class VistaJuego extends JFrame implements Observer {
     private JPanel panelJuego;
     private JLabel[][] celdas;
-    private ControladorBomberman controlador = null; 
+    private ControladorBomberman controlador = null;
 
     private ImageIcon fondoJuego = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png"));
     private ImageIcon bloqueBlandoIcon = new ImageIcon(getClass().getResource("/Sprites/soft1.png"));
@@ -24,64 +23,61 @@ public class VistaJuego extends JFrame implements Observer {
     private ImageIcon bombermanIcon = new ImageIcon(getClass().getResource("/Sprites/bomber1.png"));
     private ImageIcon bombermanConBomba = new ImageIcon(getClass().getResource("/Sprites/whitewithbomb1.png"));
     private ImageIcon bomba1 = new ImageIcon(getClass().getResource("/Sprites/bomb1.png"));
+    private ImageIcon fuegoGif = new ImageIcon(getClass().getResource("/Sprites/miniBlast1.gif"));
 
-    
-    
     private ImageIcon[] bombermanDerecha = {
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteright1.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteright2.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteright3.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteright4.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteright5.png"))
-    	};
+            new ImageIcon(getClass().getResource("/Sprites/whiteright1.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteright2.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteright3.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteright4.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteright5.png"))
+    };
     private ImageIcon[] bombermanIzquierda = {
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteleft1.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteleft2.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteleft3.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteleft4.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteleft5.png"))
-    	};
-    
+            new ImageIcon(getClass().getResource("/Sprites/whiteleft1.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteleft2.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteleft3.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteleft4.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteleft5.png"))
+    };
+
     private ImageIcon[] bombermanArriba = {
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteup1.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteup2.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteup3.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteup4.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whiteup5.png"))
-    	};
-    
+            new ImageIcon(getClass().getResource("/Sprites/whiteup1.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteup2.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteup3.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteup4.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whiteup5.png"))
+    };
+
     private ImageIcon[] bombermanAbajo = {
-    	    new ImageIcon(getClass().getResource("/Sprites/whitedown1.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whitedown2.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whitedown3.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whitedown4.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/whitefront1.png"))
-    	};
-    
+            new ImageIcon(getClass().getResource("/Sprites/whitedown1.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whitedown2.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whitedown3.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whitedown4.png")),
+            new ImageIcon(getClass().getResource("/Sprites/whitefront1.png"))
+    };
+
     private ImageIcon[] explosionBomnba = {
-    	    new ImageIcon(getClass().getResource("/Sprites/kaBomb1.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/kaBomb2.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/kaBomb3.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/kaBomb4.png")),
-    	    new ImageIcon(getClass().getResource("/Sprites/kaBomb5.png"))
-    	};
-
-
+            new ImageIcon(getClass().getResource("/Sprites/kaBomb1.png")),
+            new ImageIcon(getClass().getResource("/Sprites/kaBomb2.png")),
+            new ImageIcon(getClass().getResource("/Sprites/kaBomb3.png")),
+            new ImageIcon(getClass().getResource("/Sprites/kaBomb4.png")),
+            new ImageIcon(getClass().getResource("/Sprites/kaBomb5.png"))
+    };
 
     public VistaJuego(int filas, int columnas) {
-    	controlador = ControladorBomberman.getControladorBomberman();
+        controlador = ControladorBomberman.getControladorBomberman();
         Tablero.getTablero().addObserver(this);
         initialize(filas, columnas);
 
-        this.addKeyListener(controlador); 
+        this.addKeyListener(controlador);
         setFocusable(true);
-        requestFocus(); 
-        requestFocusInWindow(); 
+        requestFocus();
+        requestFocusInWindow();
 
-        SwingUtilities.invokeLater(() -> this.requestFocusInWindow()); 
+        SwingUtilities.invokeLater(() -> this.requestFocusInWindow());
         System.out.println("KeyListener registrado: " + Arrays.toString(this.getKeyListeners()));
     }
-    
+
     private void initialize(int filas, int columnas) {
         setTitle("Bomberman - Juego");
         setSize(600, 600);
@@ -105,18 +101,17 @@ public class VistaJuego extends JFrame implements Observer {
             }
         }
 
-        actualizarVista(); 
+        actualizarVista();
         setVisible(true);
     }
 
-
     private void actualizarVista() {
-        Casilla[][] estadoTablero = controlador.getEstadoTablero(); 
+        Casilla[][] estadoTablero = controlador.getEstadoTablero();
         int[] bombermanPos = controlador.getPosicionBomberman();
-        String direccion = controlador.getUltimaDireccion(); //Obtener dirección actual
-        int frame = controlador.getFrameBomberman(); //Frame para la animación
-        boolean colocandoBomba = controlador.estaColocandoBomba(); //Saber si está poniendo una bomba
-        int frameExplosion = controlador.getFrameExplosion(); //Obtener frame de la explosión
+        String direccion = controlador.getUltimaDireccion(); // Obtener dirección actual
+        int frame = controlador.getFrameBomberman(); // Frame para la animación
+        boolean colocandoBomba = controlador.estaColocandoBomba(); // Saber si está poniendo una bomba
+        int frameExplosion = controlador.getFrameExplosion(); // Obtener frame de la explosión
 
         for (int i = 0; i < estadoTablero.length; i++) {
             for (int j = 0; j < estadoTablero[i].length; j++) {
@@ -129,7 +124,8 @@ public class VistaJuego extends JFrame implements Observer {
                     } else {
                         switch (direccion) {
                             case "derecha" -> celdas[i][j].setIcon(bombermanDerecha[frame % bombermanDerecha.length]);
-                            case "izquierda" -> celdas[i][j].setIcon(bombermanIzquierda[frame % bombermanIzquierda.length]);
+                            case "izquierda" ->
+                                celdas[i][j].setIcon(bombermanIzquierda[frame % bombermanIzquierda.length]);
                             case "arriba" -> celdas[i][j].setIcon(bombermanArriba[frame % bombermanArriba.length]);
                             case "abajo" -> celdas[i][j].setIcon(bombermanAbajo[frame % bombermanAbajo.length]);
                             default -> celdas[i][j].setIcon(bombermanIcon);
@@ -138,11 +134,16 @@ public class VistaJuego extends JFrame implements Observer {
                 }
                 // Si hay una bomba en la casilla
                 else if (casilla.tieneBomba()) {
-                    if (casilla.bombaEstaExplotando()) { //Si la bomba está explotando
+                    if (casilla.bombaEstaExplotando()) { // Si la bomba está explotando
                         celdas[i][j].setIcon(explosionBomnba[frameExplosion % explosionBomnba.length]);
                     } else {
                         celdas[i][j].setIcon(bomba1);
                     }
+                }
+
+                // Si está en explosion
+                else if (casilla.estaEnExplosion() && !casilla.tieneBomba() && !casilla.tieneBloqueDuro()) {
+                    celdas[i][j].setIcon(fuegoGif);
                 }
                 // Bloques y celdas vacías
                 else if (casilla.tieneBloqueDuro()) {
@@ -155,9 +156,6 @@ public class VistaJuego extends JFrame implements Observer {
             }
         }
     }
-
-
-
 
     // Clase para el panel con fondo
     private static class PanelConFondo extends JPanel {
@@ -175,28 +173,29 @@ public class VistaJuego extends JFrame implements Observer {
             }
         }
     }
+
     @Override
     public void update(Observable o, Object arg) {
         actualizarVista();
     }
 
-    
     private static class ControladorBomberman implements KeyListener {
         private static ControladorBomberman miControladorBomberman;
         private Tablero tablero;
         private Bomberman bomberman;
         private int frameBomberman = 0;
         private int frameExplosion = 0;
-        private String ultimaDireccion = "abajo"; //Por defecto mirando abajo
-        private boolean colocandoBomba = false; 
+        private String ultimaDireccion = "abajo"; // Por defecto mirando abajo
+        private boolean colocandoBomba = false;
 
-        public boolean estaColocandoBomba() {  
+        public boolean estaColocandoBomba() {
             return colocandoBomba;
         }
 
-        public int getFrameExplosion() {  
+        public int getFrameExplosion() {
             return frameExplosion;
         }
+
         private ControladorBomberman() {
             this.tablero = Tablero.getTablero();
             this.bomberman = tablero.getBomberman();
@@ -216,20 +215,19 @@ public class VistaJuego extends JFrame implements Observer {
             }
             return miControladorBomberman;
         }
-        
+
         public Casilla[][] getEstadoTablero() {
             return tablero.getCeldas();
         }
-        
-
 
         public int[] getPosicionBomberman() {
-            return new int[]{bomberman.getX(), bomberman.getY()};
+            return new int[] { bomberman.getX(), bomberman.getY() };
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if (!bomberman.estaVivo()) return;
+            if (!bomberman.estaVivo())
+                return;
 
             int key = e.getKeyCode();
             switch (key) {
@@ -252,7 +250,7 @@ public class VistaJuego extends JFrame implements Observer {
                 case KeyEvent.VK_SPACE -> {
                     colocandoBomba = true;
                     bomberman.ponerBomba();
-                    
+
                     // Alternar el estado de "colocando bomba" después de 500ms
                     new Timer(500, evt -> {
                         colocandoBomba = false;
@@ -265,16 +263,14 @@ public class VistaJuego extends JFrame implements Observer {
             tablero.notificarCambio();
         }
 
-
+        @Override
+        public void keyReleased(KeyEvent e) {
+        }
 
         @Override
-        public void keyReleased(KeyEvent e) {}
+        public void keyTyped(KeyEvent e) {
+        }
 
-        @Override
-        public void keyTyped(KeyEvent e) {}
-
-		
     }
 
-		
 }
