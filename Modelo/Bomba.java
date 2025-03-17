@@ -1,21 +1,22 @@
 package Modelo;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Bomba {	
+public class Bomba {
     private int x;
     private int y;
-    private Timer timer; 
+    private Timer timer;
     private boolean enExplosion = false;
-    
+
     public Bomba(int x, int y) {
         this.x = x;
-        this.y = y; 
+        this.y = y;
         this.timer = new Timer();
-    }    
+    }
 
     public boolean estaExplotando() {
-        return enExplosion; 
+        return enExplosion;
     }
 
     public void iniciarExplosion() {
@@ -25,15 +26,15 @@ public class Bomba {
     public void finalizarExplosion() {
         enExplosion = false;
     }
-        
+
     public void iniciarTemporizador() {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 Tablero.getTablero().manejarExplosion(x, y);
-                animarExplosion(); 
+                animarExplosion();
             }
-        }, 3000); 
+        }, 3000);
     }
 
     public int getX() {
@@ -43,7 +44,7 @@ public class Bomba {
     public int getY() {
         return y;
     }
-    
+
     public void animarExplosion() {
         enExplosion = true;
 
@@ -53,16 +54,16 @@ public class Bomba {
 
             @Override
             public void run() {
-                if (frame >= 5) { 
+                if (frame >= 5) {
                     finalizarExplosion();
-                
+
                     Tablero.getTablero().eliminarBomba(x, y);
                     explosionTimer.cancel();
                 } else {
-                    frame++; 
-                    Tablero.getTablero().notificarCambio(); 
+                    frame++;
+                    Tablero.getTablero().notificarCambio();
                 }
             }
-        }, 0, 100); 
+        }, 0, 400);
     }
 }

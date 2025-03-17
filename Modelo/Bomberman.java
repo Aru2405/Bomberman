@@ -49,16 +49,18 @@ public class Bomberman {
 
     public void ponerBomba() {
         Tablero tablero = Tablero.getTablero();
-        Casilla casillaActual = tablero.getCasilla(this.x, this.y);
-         System.out.println("Bomba colocada en: (" + x + ", " + y + ")");
-         Bomba nuevaBomba = new Bomba(this.x, this.y);
-         casillaActual.colocarBomba(nuevaBomba); 
-         nuevaBomba.iniciarTemporizador();
-
-         
         
-        
+        if (tablero.contarBombasActivas() < 10) { // Verificar si hay menos de 10 bombas
+            Casilla casillaActual = tablero.getCasilla(this.x, this.y);
+            System.out.println("Bomba colocada en: (" + x + ", " + y + ")");
+            Bomba nuevaBomba = new Bomba(this.x, this.y);
+            casillaActual.colocarBomba(nuevaBomba);
+            nuevaBomba.iniciarTemporizador();
+        } else {
+            System.out.println("¡Límite de bombas alcanzado! No puedes colocar más.");
+        }
     }
+    
 
 
     public void morir() {
