@@ -17,11 +17,14 @@ public class Tablero extends Observable {
     private Tablero() {
         this.celdas = new Casilla[filas][columnas];
         inicializarTablero();
+        notificarCambio();
+
     }
 
     public static Tablero getTablero() {
         if (miTablero == null) {
             miTablero = new Tablero();
+            
         }
         return miTablero;
     }
@@ -49,9 +52,16 @@ public class Tablero extends Observable {
                     celdas[i][j].colocarBloqueBlando();
                 }
             }
+            
         }
+        
+        Casilla casillaInicial = celdas[bomberman.getX()][bomberman.getY()];
+        casillaInicial.colocarBomberman(bomberman);
+        notificarCambio();
 
     }
+    
+
 
     public Casilla getCasilla(int x, int y) {
 
@@ -120,7 +130,7 @@ public class Tablero extends Observable {
                     int nuevaY = y + dir[1];
                     if (esValida(nuevaX, nuevaY) && getCasilla(nuevaX, nuevaY).estaEnExplosion()) {
                         if (bomberman.getX() == nuevaX && bomberman.getY() == nuevaY) {
-                            System.out.println("🔥 Bomberman entró en una casilla en explosión y murió.");
+                            System.out.println("Bomberman entró en una casilla en explosión y murió.");
                             bomberman.morir();
                             timerExplosion.cancel();
                             return;
@@ -168,9 +178,10 @@ public class Tablero extends Observable {
 
     public void notificarCambio() {
         setChanged();
-        notifyObservers();
-
+        notifyObservers(new Object[]{celdas, bomberman.getUltimaDireccion()}); 
     }
+    
+
 
     public int contarBombasActivas() {
         int contador = 0;
@@ -183,5 +194,7 @@ public class Tablero extends Observable {
         }
         return contador;
     }
+    
+
 
 }
