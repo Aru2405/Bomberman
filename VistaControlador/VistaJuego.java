@@ -17,7 +17,6 @@ public class VistaJuego extends JFrame implements Observer {
     private JLabel[][] celdas;
     private ControladorBomberman controlador = null;
     private int frameBomberman = 0;
-
     private ImageIcon fondoJuego = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png"));
     private ImageIcon bloqueBlandoIcon = new ImageIcon(getClass().getResource("/Sprites/soft1.png"));
     private ImageIcon bloqueDuroIcon = new ImageIcon(getClass().getResource("/Sprites/hard1.png"));
@@ -70,12 +69,16 @@ public class VistaJuego extends JFrame implements Observer {
         Tablero.getTablero().addObserver(this);
         initialize(filas, columnas);
 
+
         this.addKeyListener(controlador);
         setFocusable(true);
         requestFocus();
         requestFocusInWindow();
 
         SwingUtilities.invokeLater(() -> this.requestFocusInWindow());
+        
+   
+
         System.out.println("KeyListener registrado: " + Arrays.toString(this.getKeyListeners()));
     }
 
@@ -102,61 +105,11 @@ public class VistaJuego extends JFrame implements Observer {
             }
         }
 
-        actualizarVista();
+        
         setVisible(true);
     }
 
-    private void actualizarVista() {
-        Casilla[][] estadoTablero = controlador.getEstadoTablero();
-        int[] bombermanPos = controlador.getPosicionBomberman();
-        String direccion = controlador.getUltimaDireccion(); // Obtener dirección actual
-        int frame = controlador.getFrameBomberman(); // Frame para la animación
-        boolean colocandoBomba = controlador.estaColocandoBomba(); // Saber si está poniendo una bomba
-        int frameExplosion = controlador.getFrameExplosion(); // Obtener frame de la explosión
 
-        for (int i = 0; i < estadoTablero.length; i++) {
-            for (int j = 0; j < estadoTablero[i].length; j++) {
-                Casilla casilla = estadoTablero[i][j];
-
-                // Si es la posición de Bomberman
-                if (i == bombermanPos[0] && j == bombermanPos[1]) {
-                    if (colocandoBomba) {
-                        celdas[i][j].setIcon(bombermanConBomba);
-                    } else {
-                        switch (direccion) {
-                            case "derecha" -> celdas[i][j].setIcon(bombermanDerecha[frame % bombermanDerecha.length]);
-                            case "izquierda" ->
-                                celdas[i][j].setIcon(bombermanIzquierda[frame % bombermanIzquierda.length]);
-                            case "arriba" -> celdas[i][j].setIcon(bombermanArriba[frame % bombermanArriba.length]);
-                            case "abajo" -> celdas[i][j].setIcon(bombermanAbajo[frame % bombermanAbajo.length]);
-                            default -> celdas[i][j].setIcon(bombermanIcon);
-                        }
-                    }
-                }
-                // Si hay una bomba en la casilla
-                else if (casilla.tieneBomba()) {
-                    if (casilla.bombaEstaExplotando()) { // Si la bomba está explotando
-                        celdas[i][j].setIcon(explosionBomnba[frameExplosion % explosionBomnba.length]);
-                    } else {
-                        celdas[i][j].setIcon(bomba1);
-                    }
-                }
-
-                // Si está en explosion
-                else if (casilla.estaEnExplosion() && !casilla.tieneBomba() && !casilla.tieneBloqueDuro()) {
-                    celdas[i][j].setIcon(fuegoGif);
-                }
-                // Bloques y celdas vacías
-                else if (casilla.tieneBloqueDuro()) {
-                    celdas[i][j].setIcon(bloqueDuroIcon);
-                } else if (casilla.tieneBloqueBlando()) {
-                    celdas[i][j].setIcon(bloqueBlandoIcon);
-                } else {
-                    celdas[i][j].setIcon(null);
-                }
-            }
-        }
-    }
 
     // Clase para el panel con fondo
     private static class PanelConFondo extends JPanel {
@@ -177,37 +130,82 @@ public class VistaJuego extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        actualizarVista();
+        if (arg instanceof Object[]) {
+            Object[] data = (Object[]) arg;
+            Casilla[][] estadoTablero = (Casilla[][]) data[0];
+            String ultimaDireccion = (String) data[1];
+
+            if (ultimaDireccion == null) {
+                ultimaDireccion = "abajo"; 
+            }
+
+            actualizarVista(estadoTablero, ultimaDireccion);
+        }
+    } 
+
+    
+    private void actualizarVista(Casilla[][] estadoTablero, String ultimaDireccion) {
+        for (int i = 0; i < celdas.length; i++) {
+            for (int j = 0; j < celdas[i].length; j++) {
+                Casilla casilla = estadoTablero[i][j];
+
+                if (casilla.estaEnExplosion() && !casilla.tieneBloqueDuro()) {  
+                    celdas[i][j].setIcon(fuegoGif);
+                }
+                else if (casilla.tieneBomberman()) {
+                    switch (ultimaDireccion) {
+                        case "arriba":
+                            celdas[i][j].setIcon(bombermanArriba[frameBomberman % bombermanArriba.length]);
+                            break;
+                        case "abajo":
+                            celdas[i][j].setIcon(bombermanAbajo[frameBomberman % bombermanAbajo.length]);
+                            break;
+                        case "izquierda":
+                            celdas[i][j].setIcon(bombermanIzquierda[frameBomberman % bombermanIzquierda.length]);
+                            break;
+                        case "derecha":
+                            celdas[i][j].setIcon(bombermanDerecha[frameBomberman % bombermanDerecha.length]);
+                            break;
+                        default:
+                            celdas[i][j].setIcon(bombermanIcon);
+                            break;
+                    }
+                    frameBomberman++;
+                }
+                else if (casilla.tieneBomba()) {
+                    celdas[i][j].setIcon(bomba1);
+                } 
+                else if (casilla.tieneBloqueDuro()) {  
+                    celdas[i][j].setIcon(bloqueDuroIcon);
+                } 
+                else if (casilla.tieneBloqueBlando()) {
+                    celdas[i][j].setIcon(bloqueBlandoIcon);
+                } 
+                else {
+                    celdas[i][j].setIcon(null);
+                }
+            }
+        }
+
+        panelJuego.revalidate();
+        panelJuego.repaint();
     }
+
+
+    
 
     private static class ControladorBomberman implements KeyListener {
         private static ControladorBomberman miControladorBomberman;
         private Tablero tablero;
-        private int frameBomberman = 0;
-        private int frameExplosion = 0;
-        private String ultimaDireccion = "abajo"; // Por defecto mirando abajo
-        private boolean colocandoBomba = false;
 
-        public boolean estaColocandoBomba() {
-            return colocandoBomba;
-        }
 
-        public int getFrameExplosion() {
-            return frameExplosion;
-        }
+
 
         private ControladorBomberman() {
             this.tablero = Tablero.getTablero();
-            this.bomberman = tablero.getBomberman();
+            
         }
 
-        public String getUltimaDireccion() {
-            return ultimaDireccion;
-        }
-
-        public int getFrameBomberman() {
-            return frameBomberman;
-        }
 
         public static synchronized ControladorBomberman getControladorBomberman() {
             if (miControladorBomberman == null) {
@@ -216,51 +214,39 @@ public class VistaJuego extends JFrame implements Observer {
             return miControladorBomberman;
         }
 
-        public Casilla[][] getEstadoTablero() {
-            return tablero.getCeldas();
-        }
-
-        public int[] getPosicionBomberman() {
-            return new int[] { bomberman.getX(), bomberman.getY() };
-        }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if (!bomberman.estaVivo())
+            if (!tablero.getBomberman().estaVivo())
                 return;
 
             int key = e.getKeyCode();
             switch (key) {
                 case KeyEvent.VK_UP -> {
-                    ultimaDireccion = "arriba";
-                     tablero.getBomberman().moverse(-1, 0);
+                   
+                    tablero.getBomberman().moverse(-1, 0);
                 }
                 case KeyEvent.VK_DOWN -> {
-                    ultimaDireccion = "abajo";
-                     tablero.getBomberman().moverse(1, 0);
+                    
+                    tablero.getBomberman().moverse(1, 0);
                 }
                 case KeyEvent.VK_LEFT -> {
-                    ultimaDireccion = "izquierda";
-                     tablero.getBomberman().moverse(0, -1);
+                    
+                    tablero.getBomberman().moverse(0, -1);
                 }
                 case KeyEvent.VK_RIGHT -> {
-                    ultimaDireccion = "derecha";
-                     tablero.getBomberman().moverse(0, 1);
+                   
+                    tablero.getBomberman().moverse(0, 1);
                 }
                 case KeyEvent.VK_SPACE -> {
-                    colocandoBomba = true;
-                     tablero.getBomberman().ponerBomba();
-
-                    // Alternar el estado de "colocando bomba" después de 500ms
-                    new Timer(500, evt -> {
-                        colocandoBomba = false;
-                        tablero.notificarCambio();
-                    }).start();
+               
+                    tablero.getBomberman().ponerBomba();
                 }
+     
             }
 
-            frameBomberman++;
-            tablero.notificarCambio();
+        
+          
         }
 
         @Override
