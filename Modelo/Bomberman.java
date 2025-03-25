@@ -5,6 +5,7 @@ public class Bomberman {
     private int x;
     private int y;
     private boolean vida;
+    String ultimaDireccion;
 
    
     public Bomberman(int x, int y) {
@@ -28,13 +29,29 @@ public class Bomberman {
 
         // Verificar si la nueva casilla tiene un obstáculo
         Casilla casillaDestino = tablero.getCasilla(nuevaX, nuevaY);
-        if (casillaDestino.tieneBloqueDuro() || casillaDestino.tieneBloqueBlando()) {
+        if (casillaDestino.tieneBloqueDuro() || casillaDestino.tieneBloqueBlando() || casillaDestino.tieneBomba()) {
             return;
         }
-
+        
+        
+        //guardar la ultima direccion para la animacion
+        if (dx == -1) {
+            ultimaDireccion = "arriba";
+        } else if (dx == 1) {
+            ultimaDireccion = "abajo";
+        } else if (dy == -1) {
+            ultimaDireccion = "izquierda";
+        } else if (dy == 1) {
+            ultimaDireccion = "derecha";
+        }
+        
+        
+        tablero.getCasilla(this.x,this.y).eliminarBomberman();
         //Si la casilla está libre, mover a Bomberman y actualizar Tablero
         this.x = nuevaX;
         this.y = nuevaY;
+        
+        tablero.getCasilla(x, y).colocarBomberman(this);
         tablero.notificarCambio();
     }
 
@@ -72,6 +89,11 @@ public class Bomberman {
     public boolean estaVivo(){
     	return vida;
     }
+
+	public Object getUltimaDireccion() {
+		
+		return  ultimaDireccion;
+	}
    
 
 
