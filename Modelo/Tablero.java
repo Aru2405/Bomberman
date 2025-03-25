@@ -201,17 +201,18 @@ public class Tablero extends Observable {
 
                 if (casilla.tieneBloqueDuro()) {
                     estado[i][j] = 4;
-                } else if (casilla.tieneBomberman()) {
-                    estado[i][j] = 1;
+                } else if (casilla.estaEnExplosion()) {
+                    estado[i][j] = 3;  
                 } else if (casilla.tieneBomba()) {
                     estado[i][j] = 2;
-                } else if (casilla.estaEnExplosion()) {
-                    estado[i][j] = 3;
+                } else if (casilla.tieneBomberman()) {
+                    estado[i][j] = 1;
                 } else if (casilla.tieneBloqueBlando()) {
                     estado[i][j] = 5;
                 } else {
                     estado[i][j] = 0;
                 }
+
             }
         }
 
