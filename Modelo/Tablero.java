@@ -24,7 +24,7 @@ public class Tablero extends Observable {
     public static Tablero getTablero() {
         if (miTablero == null) {
             miTablero = new Tablero();
-            
+
         }
         return miTablero;
     }
@@ -52,16 +52,14 @@ public class Tablero extends Observable {
                     celdas[i][j].colocarBloqueBlando();
                 }
             }
-            
+
         }
-        
+
         Casilla casillaInicial = celdas[bomberman.getX()][bomberman.getY()];
         casillaInicial.colocarBomberman(bomberman);
         notificarCambio();
 
     }
-    
-
 
     public Casilla getCasilla(int x, int y) {
 
@@ -178,10 +176,9 @@ public class Tablero extends Observable {
 
     public void notificarCambio() {
         setChanged();
-        notifyObservers(new Object[]{celdas, bomberman.getUltimaDireccion()}); 
-    }
-    
+        notifyObservers(new Object[] { bomberman.getUltimaDireccion(), obtenerEstadoTablero() });
 
+    }
 
     public int contarBombasActivas() {
         int contador = 0;
@@ -194,7 +191,31 @@ public class Tablero extends Observable {
         }
         return contador;
     }
-    
 
+    public int[][] obtenerEstadoTablero() {
+        int[][] estado = new int[filas][columnas];
+
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                Casilla casilla = celdas[i][j];
+
+                if (casilla.tieneBloqueDuro()) {
+                    estado[i][j] = 4;
+                } else if (casilla.tieneBomberman()) {
+                    estado[i][j] = 1;
+                } else if (casilla.tieneBomba()) {
+                    estado[i][j] = 2;
+                } else if (casilla.estaEnExplosion()) {
+                    estado[i][j] = 3;
+                } else if (casilla.tieneBloqueBlando()) {
+                    estado[i][j] = 5;
+                } else {
+                    estado[i][j] = 0;
+                }
+            }
+        }
+
+        return estado;
+    }
 
 }

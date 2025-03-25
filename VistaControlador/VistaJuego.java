@@ -7,8 +7,7 @@ import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
-import Modelo.Bomberman;
-import Modelo.Casilla;
+
 import Modelo.Tablero;
 
 @SuppressWarnings({ "deprecation", "serial" })
@@ -130,66 +129,48 @@ public class VistaJuego extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof Object[]) {
-            Object[] data = (Object[]) arg;
-            Casilla[][] estadoTablero = (Casilla[][]) data[0];
-            String ultimaDireccion = (String) data[1];
+    if (arg instanceof Object[]) {
+        Object[] data = (Object[]) arg;
+        String direccion = (String) data[0];
+        int[][] estadoTablero = (int[][]) data[1]; 
 
-            if (ultimaDireccion == null) {
-                ultimaDireccion = "abajo"; 
-            }
+        if (direccion == null) direccion = "abajo";
 
-            actualizarVista(estadoTablero, ultimaDireccion);
-        }
-    } 
+        actualizarVista(estadoTablero, direccion);
+    }
+    }
+
 
     
-    private void actualizarVista(Casilla[][] estadoTablero, String ultimaDireccion) {
+    private void actualizarVista(int[][] estadoTablero, String ultimaDireccion) {
         for (int i = 0; i < celdas.length; i++) {
             for (int j = 0; j < celdas[i].length; j++) {
-                Casilla casilla = estadoTablero[i][j];
-
-                if (casilla.estaEnExplosion() && !casilla.tieneBloqueDuro()) {  
-                    celdas[i][j].setIcon(fuegoGif);
-                }
-                else if (casilla.tieneBomberman()) {
-                    switch (ultimaDireccion) {
-                        case "arriba":
-                            celdas[i][j].setIcon(bombermanArriba[frameBomberman % bombermanArriba.length]);
-                            break;
-                        case "abajo":
-                            celdas[i][j].setIcon(bombermanAbajo[frameBomberman % bombermanAbajo.length]);
-                            break;
-                        case "izquierda":
-                            celdas[i][j].setIcon(bombermanIzquierda[frameBomberman % bombermanIzquierda.length]);
-                            break;
-                        case "derecha":
-                            celdas[i][j].setIcon(bombermanDerecha[frameBomberman % bombermanDerecha.length]);
-                            break;
-                        default:
-                            celdas[i][j].setIcon(bombermanIcon);
-                            break;
+                int valor = estadoTablero[i][j];
+    
+                switch (valor) {
+                    case 0 -> celdas[i][j].setIcon(null); 
+                    case 1 -> { 
+                        switch (ultimaDireccion) {
+                            case "arriba" -> celdas[i][j].setIcon(bombermanArriba[frameBomberman % bombermanArriba.length]);
+                            case "abajo" -> celdas[i][j].setIcon(bombermanAbajo[frameBomberman % bombermanAbajo.length]);
+                            case "izquierda" -> celdas[i][j].setIcon(bombermanIzquierda[frameBomberman % bombermanIzquierda.length]);
+                            case "derecha" -> celdas[i][j].setIcon(bombermanDerecha[frameBomberman % bombermanDerecha.length]);
+                            default -> celdas[i][j].setIcon(bombermanIcon);
+                        }
                     }
-                    frameBomberman++;
-                }
-                else if (casilla.tieneBomba()) {
-                    celdas[i][j].setIcon(bomba1);
-                } 
-                else if (casilla.tieneBloqueDuro()) {  
-                    celdas[i][j].setIcon(bloqueDuroIcon);
-                } 
-                else if (casilla.tieneBloqueBlando()) {
-                    celdas[i][j].setIcon(bloqueBlandoIcon);
-                } 
-                else {
-                    celdas[i][j].setIcon(null);
+                    case 2 -> celdas[i][j].setIcon(bomba1);         
+                    case 3 -> celdas[i][j].setIcon(fuegoGif);       
+                    case 4 -> celdas[i][j].setIcon(bloqueDuroIcon); 
+                    case 5 -> celdas[i][j].setIcon(bloqueBlandoIcon); 
                 }
             }
         }
-
+    
+        frameBomberman++;
         panelJuego.revalidate();
         panelJuego.repaint();
     }
+    
 
 
     
