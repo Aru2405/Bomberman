@@ -16,6 +16,7 @@ public class VistaJuego extends JFrame implements Observer {
     private JPanel panelJuego;
     private JLabel[][] celdas;
     private ControladorBomberman controlador = null;
+    private int frameBomberman = 0;
 
     private ImageIcon fondoJuego = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png"));
     private ImageIcon bloqueBlandoIcon = new ImageIcon(getClass().getResource("/Sprites/soft1.png"));
@@ -182,7 +183,6 @@ public class VistaJuego extends JFrame implements Observer {
     private static class ControladorBomberman implements KeyListener {
         private static ControladorBomberman miControladorBomberman;
         private Tablero tablero;
-        private Bomberman bomberman;
         private int frameBomberman = 0;
         private int frameExplosion = 0;
         private String ultimaDireccion = "abajo"; // Por defecto mirando abajo
@@ -233,23 +233,23 @@ public class VistaJuego extends JFrame implements Observer {
             switch (key) {
                 case KeyEvent.VK_UP -> {
                     ultimaDireccion = "arriba";
-                    bomberman.moverse(-1, 0);
+                     tablero.getBomberman().moverse(-1, 0);
                 }
                 case KeyEvent.VK_DOWN -> {
                     ultimaDireccion = "abajo";
-                    bomberman.moverse(1, 0);
+                     tablero.getBomberman().moverse(1, 0);
                 }
                 case KeyEvent.VK_LEFT -> {
                     ultimaDireccion = "izquierda";
-                    bomberman.moverse(0, -1);
+                     tablero.getBomberman().moverse(0, -1);
                 }
                 case KeyEvent.VK_RIGHT -> {
                     ultimaDireccion = "derecha";
-                    bomberman.moverse(0, 1);
+                     tablero.getBomberman().moverse(0, 1);
                 }
                 case KeyEvent.VK_SPACE -> {
                     colocandoBomba = true;
-                    bomberman.ponerBomba();
+                     tablero.getBomberman().ponerBomba();
 
                     // Alternar el estado de "colocando bomba" después de 500ms
                     new Timer(500, evt -> {
