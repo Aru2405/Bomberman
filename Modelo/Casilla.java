@@ -39,7 +39,7 @@ public class Casilla {
 
     public void colocarBloqueBlando() {
         this.bloqueBlando = new BloqueBlando();
-
+        
     }
 
     public boolean tieneBloqueBlando() {
