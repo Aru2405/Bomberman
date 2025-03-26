@@ -177,13 +177,11 @@ public class VistaJuego extends JFrame implements Observer {
 
     private static class ControladorBomberman implements KeyListener {
         private static ControladorBomberman miControladorBomberman;
-        private Tablero tablero;
-
 
 
 
         private ControladorBomberman() {
-            this.tablero = Tablero.getTablero();
+            
             
         }
 
@@ -198,30 +196,30 @@ public class VistaJuego extends JFrame implements Observer {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if (!tablero.getBomberman().estaVivo())
+            if (!Tablero.getTablero().getBomberman().estaVivo())
                 return;
 
             int key = e.getKeyCode();
             switch (key) {
                 case KeyEvent.VK_UP -> {
                    
-                    tablero.getBomberman().moverse(-1, 0);
+                	Tablero.getTablero().getBomberman().moverse(-1, 0);
                 }
                 case KeyEvent.VK_DOWN -> {
                     
-                    tablero.getBomberman().moverse(1, 0);
+                	Tablero.getTablero().getBomberman().moverse(1, 0);
                 }
                 case KeyEvent.VK_LEFT -> {
                     
-                    tablero.getBomberman().moverse(0, -1);
+                	Tablero.getTablero().getBomberman().moverse(0, -1);
                 }
                 case KeyEvent.VK_RIGHT -> {
                    
-                    tablero.getBomberman().moverse(0, 1);
+                	Tablero.getTablero().getBomberman().moverse(0, 1);
                 }
                 case KeyEvent.VK_SPACE -> {
                
-                    tablero.getBomberman().ponerBomba();
+                	Tablero.getTablero().getBomberman().ponerBomba();
                 }
      
             }
