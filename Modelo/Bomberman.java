@@ -20,15 +20,15 @@ public class Bomberman {
         int nuevaX = this.x + dx;
         int nuevaY = this.y + dy;
 
-        Tablero tablero = Tablero.getTablero();
+         Tablero.getTablero();
 
         //Verificar si la nueva posición está dentro del tablero
-        if (!tablero.esValida(nuevaX, nuevaY)) {
+        if (!Tablero.getTablero().esValida(nuevaX, nuevaY)) {
             return;
         }
 
         // Verificar si la nueva casilla tiene un obstáculo
-        Casilla casillaDestino = tablero.getCasilla(nuevaX, nuevaY);
+        Casilla casillaDestino = Tablero.getTablero().getCasilla(nuevaX, nuevaY);
         if (casillaDestino.tieneBloqueDuro() || casillaDestino.tieneBloqueBlando() || casillaDestino.tieneBomba()) {
             return;
         }
@@ -46,13 +46,13 @@ public class Bomberman {
         }
         
         
-        tablero.getCasilla(this.x,this.y).eliminarBomberman();
+        Tablero.getTablero().getCasilla(this.x,this.y).eliminarBomberman();
         //Si la casilla está libre, mover a Bomberman y actualizar Tablero
         this.x = nuevaX;
         this.y = nuevaY;
         
-        tablero.getCasilla(x, y).colocarBomberman(this);
-        tablero.notificarCambio();
+        Tablero.getTablero().getCasilla(x, y).colocarBomberman(this);
+        Tablero.getTablero().notificarCambio();
     }
 
     public int getX() {
@@ -65,10 +65,10 @@ public class Bomberman {
 
 
     public void ponerBomba() {
-        Tablero tablero = Tablero.getTablero();
         
-        if (tablero.contarBombasActivas() < 10) { // Verificar si hay menos de 10 bombas
-            Casilla casillaActual = tablero.getCasilla(this.x, this.y);
+        
+        if (Tablero.getTablero().contarBombasActivas() < 10) { // Verificar si hay menos de 10 bombas
+            Casilla casillaActual = Tablero.getTablero().getCasilla(this.x, this.y);
             System.out.println("Bomba colocada en: (" + x + ", " + y + ")");
             Bomba nuevaBomba = new Bomba(this.x, this.y);
             casillaActual.colocarBomba(nuevaBomba);
