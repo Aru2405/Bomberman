@@ -150,9 +150,14 @@ public class Tablero extends Observable {
                     }
                 }
                 notificarCambio();
-                timerExplosion.cancel(); // Detener la verificación de colisión
+                timerExplosion.cancel(); 
             }
         }, 2000);
+        
+        if (contarBloquesBlandos() == 0) {
+            Partida.getPartida().terminarJuego();
+            return;
+        }
 
     }
 
@@ -215,8 +220,24 @@ public class Tablero extends Observable {
 
             }
         }
+        
+        
 
         return estado;
     }
+    
+    
+    public int contarBloquesBlandos() {
+        int contador = 0;
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++){
+                if (celdas[i][j].tieneBloqueBlando()){
+                    contador++;
+                }
+            }
+        }
+        return contador;
+    }
+
 
 }
