@@ -196,8 +196,7 @@ public class VistaJuego extends JFrame implements Observer {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if (!Tablero.getTablero().getBomberman().estaVivo())
-                return;
+
 
             int key = e.getKeyCode();
             switch (key) {
