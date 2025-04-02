@@ -7,7 +7,8 @@ import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
-
+import Modelo.Bomberman;
+import Modelo.Casilla;
 import Modelo.Tablero;
 
 @SuppressWarnings({ "deprecation", "serial" })
@@ -15,7 +16,7 @@ public class VistaJuego extends JFrame implements Observer {
     private JPanel panelJuego;
     private JLabel[][] celdas;
     private ControladorBomberman controlador = null;
-    private int frameBomberman = 0;
+
     private ImageIcon fondoJuego = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png"));
     private ImageIcon bloqueBlandoIcon = new ImageIcon(getClass().getResource("/Sprites/soft1.png"));
     private ImageIcon bloqueDuroIcon = new ImageIcon(getClass().getResource("/Sprites/hard1.png"));
@@ -68,16 +69,12 @@ public class VistaJuego extends JFrame implements Observer {
         Tablero.getTablero().addObserver(this);
         initialize(filas, columnas);
 
-
         this.addKeyListener(controlador);
         setFocusable(true);
         requestFocus();
         requestFocusInWindow();
 
         SwingUtilities.invokeLater(() -> this.requestFocusInWindow());
-        
-   
-
         System.out.println("KeyListener registrado: " + Arrays.toString(this.getKeyListeners()));
     }
 
@@ -104,11 +101,33 @@ public class VistaJuego extends JFrame implements Observer {
             }
         }
 
-        
+        actualizarVista();
         setVisible(true);
     }
 
+    // Cambiar URGENTE
+    private void actualizarVista() {
+        Casilla[][] estadoTablero = (Casilla[][]) arg; // Cast the argument to Casilla[][]
+        for (int i = 0; i < estadoTablero.length; i++) {
+            for (int j = 0; j < estadoTablero[i].length; j++) {
+                Casilla casilla = estadoTablero[i][j];
+                if (casilla.tieneBomba()) {
+                    celdas[i][j].setIcon(bomba1);
+                } else if (casilla.tieneBloqueDuro()) {
+                    celdas[i][j].setIcon(bloqueDuroIcon);
+                } else if (casilla.tieneBloqueBlando()) {
+                    celdas[i][j].setIcon(bloqueBlandoIcon);
+                } else {
+                    celdas[i][j].setIcon(null); // Clear the cell if it's empty
+                }
+            }
+        }
+        panelJuego.revalidate(); // Refresh the panel to show updates
+        panelJuego.repaint(); // Repaint the panel to reflect changes
+    }
 
+        
+       
 
     // Clase para el panel con fondo
     private static class PanelConFondo extends JPanel {
@@ -129,62 +148,35 @@ public class VistaJuego extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-    if (arg instanceof Object[]) {
-        Object[] data = (Object[]) arg;
-        String direccion = (String) data[0];
-        int[][] estadoTablero = (int[][]) data[1]; 
-
-        if (direccion == null) direccion = "abajo";
-
-        actualizarVista(estadoTablero, direccion);
+        actualizarVista();
     }
-    }
-
-
-    
-    private void actualizarVista(int[][] estadoTablero, String ultimaDireccion) {
-        for (int i = 0; i < celdas.length; i++) {
-            for (int j = 0; j < celdas[i].length; j++) {
-                int valor = estadoTablero[i][j];
-    
-                switch (valor) {
-                    case 0 -> celdas[i][j].setIcon(null); 
-                    case 1 -> { 
-                        switch (ultimaDireccion) {
-                            case "arriba" -> celdas[i][j].setIcon(bombermanArriba[frameBomberman % bombermanArriba.length]);
-                            case "abajo" -> celdas[i][j].setIcon(bombermanAbajo[frameBomberman % bombermanAbajo.length]);
-                            case "izquierda" -> celdas[i][j].setIcon(bombermanIzquierda[frameBomberman % bombermanIzquierda.length]);
-                            case "derecha" -> celdas[i][j].setIcon(bombermanDerecha[frameBomberman % bombermanDerecha.length]);
-                            default -> celdas[i][j].setIcon(bombermanIcon);
-                        }
-                    }
-                    case 2 -> celdas[i][j].setIcon(bomba1);         
-                    case 3 -> celdas[i][j].setIcon(fuegoGif);       
-                    case 4 -> celdas[i][j].setIcon(bloqueDuroIcon); 
-                    case 5 -> celdas[i][j].setIcon(bloqueBlandoIcon); 
-                }
-            }
-        }
-    
-        frameBomberman++;
-        panelJuego.revalidate();
-        panelJuego.repaint();
-    }
-    
-
-
-    
 
     private static class ControladorBomberman implements KeyListener {
         private static ControladorBomberman miControladorBomberman;
+        private Tablero tablero;
+        private int frameBomberman = 0;
+        private int frameExplosion = 0;
+        private String ultimaDireccion = "abajo"; // Por defecto mirando abajo
+        private boolean colocandoBomba = false;
 
-
-
-        private ControladorBomberman() {
-            
-            
+        public boolean estaColocandoBomba() {
+            return colocandoBomba;
         }
 
+        public int getFrameExplosion() {
+            return frameExplosion;
+        }
+
+        private ControladorBomberman() {
+            this.tablero = Tablero.getTablero();
+            tablero.getBomberman();
+        }
+
+        public String getUltimaDireccion() {
+            return ultimaDireccion;
+        }
+
+        
 
         public static synchronized ControladorBomberman getControladorBomberman() {
             if (miControladorBomberman == null) {
@@ -193,48 +185,55 @@ public class VistaJuego extends JFrame implements Observer {
             return miControladorBomberman;
         }
 
+        public Casilla[][] getEstadoTablero() {
+            return tablero.getCeldas();
+        }
+
+        public int[] getPosicionBomberman() {
+            return new int[] { tablero.getBomberman().getX(), tablero.getBomberman().getY() };
+        }
 
         @Override
         public void keyPressed(KeyEvent e) {
-
+            if (!tablero.getBomberman().estaVivo())
+                return;
 
             int key = e.getKeyCode();
             switch (key) {
                 case KeyEvent.VK_UP -> {
-                   
-                	Tablero.getTablero().getBomberman().moverse(-1, 0);
+                    ultimaDireccion = "arriba";
+                    tablero.getBomberman().moverse(-1, 0);
                 }
                 case KeyEvent.VK_DOWN -> {
-                    
-                	Tablero.getTablero().getBomberman().moverse(1, 0);
+                    ultimaDireccion = "abajo";
+                    tablero.getBomberman().moverse(1, 0);
                 }
                 case KeyEvent.VK_LEFT -> {
-                    
-                	Tablero.getTablero().getBomberman().moverse(0, -1);
+                    ultimaDireccion = "izquierda";
+                    tablero.getBomberman().moverse(0, -1);
                 }
                 case KeyEvent.VK_RIGHT -> {
-                   
-                	Tablero.getTablero().getBomberman().moverse(0, 1);
+                    ultimaDireccion = "derecha";
+                    tablero.getBomberman().moverse(0, 1);
                 }
                 case KeyEvent.VK_SPACE -> {
-               
-                	Tablero.getTablero().getBomberman().ponerBomba();
-                }
-     
-            }
+                    colocandoBomba = true;
+                    tablero.getBomberman().ponerBomba();
 
-        
-          
+                    // Alternar el estado de "colocando bomba" después de 500ms
+                    new Timer(500, evt -> {
+                        colocandoBomba = false;
+}
+
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'keyTyped'");
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'keyReleased'");
         }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-        }
-
-    }
-
-}

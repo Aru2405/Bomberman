@@ -2,12 +2,13 @@ package Modelo;
 
 public class Partida {
 	
+	private Tablero tablero;
     private int nivel;
     private boolean juegoActivo;
     private static Partida miPartida;
 
     private Partida(int filas, int columnas){
-  
+    	this.tablero= tablero.getTablero();
     	this.nivel=1;
     	this.juegoActivo=true;
     	
@@ -16,7 +17,6 @@ public class Partida {
     public static Partida getPartida(){
         if (miPartida == null) {
         	miPartida = new Partida(11, 17);
-
         }
         return miPartida;
     }

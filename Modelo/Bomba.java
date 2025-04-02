@@ -8,7 +8,6 @@ public class Bomba {
     private int y;
     private Timer timer;
     private boolean enExplosion = false;
-    private int frame = 0;
 
     public Bomba(int x, int y) {
         this.x = x;
@@ -51,6 +50,7 @@ public class Bomba {
 
         Timer explosionTimer = new Timer();
         explosionTimer.schedule(new TimerTask() {
+            private int frame = 0;
 
             @Override
             public void run() {
