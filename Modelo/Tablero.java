@@ -3,7 +3,9 @@ package Modelo;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.ArrayList;
 import java.util.Observable;
+import java.util.List;
 
 public class Tablero extends Observable {
 
@@ -13,7 +15,9 @@ public class Tablero extends Observable {
     private static Tablero miTablero;
     private Bomberman bomberman = new Bomberman(0, 0);
     private Timer timer = new Timer();
+    private List<Enemigo> enemigos = new ArrayList<>();
 
+    
     private Tablero() {
         this.celdas = new Casilla[filas][columnas];
         inicializarTablero();
@@ -53,13 +57,49 @@ public class Tablero extends Observable {
                 }
             }
 
-        }
 
+        }
+        
+        
+        
         Casilla casillaInicial = celdas[bomberman.getX()][bomberman.getY()];
         casillaInicial.colocarBomberman(bomberman);
+        
+     // Enemigos
+        int enemigosColocados = 0;
+
+        while (enemigosColocados < 2) {
+            int x = rand.nextInt(filas);
+            int y = rand.nextInt(columnas);
+
+            if ((x == 0 && y == 0) || (x == 0 && y == 1) || (x == 1 && y == 0))
+                continue;
+
+            Casilla posible = celdas[x][y];
+
+            if (!posible.tieneBloqueDuro() &&
+                !posible.tieneBloqueBlando() &&
+                !posible.tieneBomberman() &&
+                !posible.tieneEnemigo()) {
+
+                Enemigo enemigo = new Enemigo(x, y, new MovimientoAleatorio());
+                añadirEnemigo(enemigo);  
+                enemigosColocados++;
+            }
+        }
+
+
         notificarCambio();
 
+
     }
+    
+    public void añadirEnemigo(Enemigo e) {
+        enemigos.add(e);
+        getCasilla(e.getX(), e.getY()).colocarEnemigo(e);
+
+    }
+
 
     public Casilla getCasilla(int x, int y) {
 
@@ -110,7 +150,18 @@ public class Tablero extends Observable {
             if (afectada.tieneBloqueBlando()) {
                 afectada.destruirBloqueBlando();
             }
+            
+            for (Enemigo enemigo : getEnemigos()) { 
+            	Enemigo enemigoEnCasilla = getCasilla(nuevaX, nuevaY).getEnemigo();
+            	if (enemigoEnCasilla != null) {
+            	    enemigoEnCasilla.detener();  
+            	    enemigos.remove(enemigoEnCasilla);  
+            	    getCasilla(nuevaX, nuevaY).eliminarEnemigo(); 
+            	    System.out.println("💀 Enemigo eliminado por explosión en (" + nuevaX + ", " + nuevaY + ")");
+            	}
 
+
+            }
             if (bomberman.getX() == nuevaX && bomberman.getY() == nuevaY) {
                 System.out.println("Bomberman ha sido alcanzado por la explosión!");
                 bomberman.morir();
@@ -174,6 +225,18 @@ public class Tablero extends Observable {
             }
         }
     }
+    
+    public List<Enemigo> getEnemigos() {
+        return enemigos;
+    }
+    
+    public void iniciarEnemigos() {
+        for (Enemigo enemigo : getEnemigos()) {
+            enemigo.iniciar();
+        }
+    }
+
+
 
     public Bomberman getBomberman() {
         return bomberman;
@@ -207,11 +270,13 @@ public class Tablero extends Observable {
                 if (casilla.tieneBloqueDuro()) {
                     estado[i][j] = 4;
                 } else if (casilla.estaEnExplosion()) {
-                    estado[i][j] = 3;  
-                } else if (casilla.tieneBomba()) {
-                    estado[i][j] = 2;
+                    estado[i][j] = 3;                    
+                } else if (casilla.tieneEnemigo()){
+                	estado[i][j]=6;
                 } else if (casilla.tieneBomberman()) {
                     estado[i][j] = 1;
+                } else if (casilla.tieneBomba()) {
+                    estado[i][j] = 2;
                 } else if (casilla.tieneBloqueBlando()) {
                     estado[i][j] = 5;
                 } else {
@@ -238,6 +303,9 @@ public class Tablero extends Observable {
         }
         return contador;
     }
+    
+
+
 
 
 }

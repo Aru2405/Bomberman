@@ -6,6 +6,7 @@ public class Casilla {
     private BloqueBlando bloqueBlando;
     private BloqueDuro bloqueDuro;
     private Bomberman bomberman;
+    private Enemigo enemigo;
     private boolean enExplosion = false;
 
     public Casilla() {
@@ -13,6 +14,8 @@ public class Casilla {
         this.bloqueBlando = null;
         this.bloqueDuro = null;
         this.bomberman = null;
+        this.enemigo = null;
+
     }
 
     public void colocarBomba(Bomba b) {
@@ -94,6 +97,23 @@ public class Casilla {
     public boolean estaEnExplosion() {
         return enExplosion;
     }
+
+    public void colocarEnemigo(Enemigo enemigo) {
+        this.enemigo = enemigo;
+    }
+
+    public void eliminarEnemigo() {
+        this.enemigo = null;
+    }
+
+    public boolean tieneEnemigo() {
+        return enemigo != null;
+    }
+
+    public Enemigo getEnemigo() {
+        return enemigo;
+    }
+
 
     @Override
     public String toString() {
