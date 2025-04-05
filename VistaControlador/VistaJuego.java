@@ -23,7 +23,8 @@ public class VistaJuego extends JFrame implements Observer {
     private ImageIcon bombermanConBomba = new ImageIcon(getClass().getResource("/Sprites/whitewithbomb1.png"));
     private ImageIcon bomba1 = new ImageIcon(getClass().getResource("/Sprites/bomb1.png"));
     private ImageIcon fuegoGif = new ImageIcon(getClass().getResource("/Sprites/miniBlast1.gif"));
-
+    private ImageIcon enemigo = new ImageIcon(getClass().getResource("/Sprites/doria1.png"));
+    
     private ImageIcon[] bombermanDerecha = {
             new ImageIcon(getClass().getResource("/Sprites/whiteright1.png")),
             new ImageIcon(getClass().getResource("/Sprites/whiteright2.png")),
@@ -161,7 +162,8 @@ public class VistaJuego extends JFrame implements Observer {
                     case 2 -> celdas[i][j].setIcon(bomba1);         
                     case 3 -> celdas[i][j].setIcon(fuegoGif);       
                     case 4 -> celdas[i][j].setIcon(bloqueDuroIcon); 
-                    case 5 -> celdas[i][j].setIcon(bloqueBlandoIcon); 
+                    case 5 -> celdas[i][j].setIcon(bloqueBlandoIcon);
+                    case 6 -> celdas[i][j].setIcon(enemigo);
                 }
             }
         }
@@ -196,6 +198,8 @@ public class VistaJuego extends JFrame implements Observer {
 
         @Override
         public void keyPressed(KeyEvent e) {
+        	
+
 
 
             int key = e.getKeyCode();
