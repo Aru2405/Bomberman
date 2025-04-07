@@ -1,66 +1,64 @@
 package Modelo;
 
 public class Casilla {
-
-    private Bomba bomba;
-    private BloqueBlando bloqueBlando;
-    private BloqueDuro bloqueDuro;
+    private EstadoCasilla estado;
     private Bomberman bomberman;
-    private boolean enExplosion = false;
 
     public Casilla() {
-        this.bomba = null;
-        this.bloqueBlando = null;
-        this.bloqueDuro = null;
+        this.estado = new EstadoVacio(); 
         this.bomberman = null;
     }
 
+    public void setEstado(EstadoCasilla estado) {
+        this.estado = estado;
+    }
+
+    public EstadoCasilla getEstado() {
+        return estado;
+    }
+
     public void colocarBomba(Bomba b) {
-        this.bomba = b;
-
-    }
-
-    public Bomba getBomba() {
-        return this.bomba;
-    }
-
-    public boolean tieneBomba() {
-        return bomba != null;
-    }
-
-    public void detonarBomba() {
-        if (bomba != null) {
-
-            System.out.println("Bomba exploto en esta casilla");
-            this.bomba = null;
-
-        }
+        estado.colocarBomba(this, b);
     }
 
     public void colocarBloqueBlando() {
-        this.bloqueBlando = new BloqueBlando();
-
-    }
-
-    public boolean tieneBloqueBlando() {
-
-        return bloqueBlando != null;
-
-    }
-
-    public void destruirBloqueBlando() {
-        if (tieneBloqueBlando()) {
-            bloqueBlando = null;
-            System.out.println("Bloque blando destruido");
-        }
+        estado.colocarBloqueBlando(this);
     }
 
     public void colocarBloqueDuro() {
-        this.bloqueDuro = new BloqueDuro();
+        estado.colocarBloqueDuro(this);
+    }
+
+    public void destruirBloqueBlando() {
+        estado.destruirBloqueBlando(this);
+    }
+
+    public void iniciarExplosion() {
+        estado.iniciarExplosion(this);
+    }
+
+    public void finalizarExplosion() {
+        estado.finalizarExplosion(this);
+    }
+
+    public void detonarBomba() {
+        estado.detonarBomba(this);
+    }
+
+    public boolean tieneBomba() {
+        return estado.tieneBomba();
+    }
+
+    public boolean estaEnExplosion() {
+        return estado.estaEnExplosion();
+    }
+
+    public boolean tieneBloqueBlando() {
+        return estado instanceof EstadoBloqueBlando;
     }
 
     public boolean tieneBloqueDuro() {
-        return bloqueDuro != null;
+        return estado instanceof EstadoBloqueDuro;
     }
 
     public void colocarBomberman(Bomberman b) {
@@ -79,31 +77,9 @@ public class Casilla {
         return this.bomberman;
     }
 
-    public boolean bombaEstaExplotando() {
-        return tieneBomba() && getBomba().estaExplotando();
-    }
-
-    public void iniciarExplosion() {
-        enExplosion = true;
-    }
-
-    public void finalizarExplosion() {
-        enExplosion = false;
-    }
-
-    public boolean estaEnExplosion() {
-        return enExplosion;
-    }
-
+    // Debug visual
     @Override
     public String toString() {
-        if (bomba != null) {
-            return "[b]";
-        } else if (bloqueBlando != null) {
-            return "[#]";
-        } else if (bloqueDuro != null) {
-            return "[X]";
-        }
-        return "[ ]";
+        return estado.toString();
     }
 }
