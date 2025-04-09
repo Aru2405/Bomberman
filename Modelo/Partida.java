@@ -5,6 +5,7 @@ public class Partida {
     private int nivel;
     private boolean juegoActivo;
     private static Partida miPartida;
+    private TipoNivel tipoNivel;
 
     private Partida(int filas, int columnas){
   
@@ -20,10 +21,23 @@ public class Partida {
         }
         return miPartida;
     }
-
-   
     
-    public void iniciarJuego(){
+    public void inicializar(TipoNivel tipoNivel) {
+        this.tipoNivel = tipoNivel;
+        Tablero.getTablero().inicializar(11, 17, tipoNivel); // o usa las dimensiones correctas
+        // Iniciar bomberman, enemigos, etc.
+    }
+    
+    public TipoNivel getTipoNivel() {
+        return tipoNivel;
+    }
+
+    
+    public void setTipoNivel(TipoNivel tipoNivel) {
+		this.tipoNivel = tipoNivel;
+	}
+
+	public void iniciarJuego(){
     	System.out.println("El juego ha empezado");
   
     }
