@@ -81,8 +81,12 @@ public class Tablero extends Observable {
                 !posible.tieneBloqueBlando() &&
                 !posible.tieneBomberman() &&
                 !posible.tieneEnemigo()) {
+            	
+            	
+            	Enemigo enemigo = new Enemigo(x, y); 
+            	enemigo.cambiarEstrategia(new MovimientoAleatorio()); 
+            	añadirEnemigo(enemigo);  
 
-                Enemigo enemigo = new Enemigo(x, y, new MovimientoAleatorio());
                 añadirEnemigo(enemigo);  
                 enemigosColocados++;
             }
