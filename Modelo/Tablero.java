@@ -16,12 +16,20 @@ public class Tablero extends Observable {
     private Bomberman bomberman = new Bomberman(0, 0);
     private Timer timer = new Timer();
     private List<Enemigo> enemigos = new ArrayList<>();
+    private TipoNivel tipoNivel;
 
     
     private Tablero() {
         this.celdas = new Casilla[filas][columnas];
         inicializarTablero();
         notificarCambio();
+        // Asegurarse de que el tipoNivel no sea null
+        tipoNivel = Partida.getPartida().getTipoNivel();
+        if (tipoNivel == null) {
+            tipoNivel = TipoNivel.CLASSIC; // Valor por defecto si no se ha elegido
+        }
+
+        inicializarTablero();
 
     }
 
@@ -32,7 +40,13 @@ public class Tablero extends Observable {
         }
         return miTablero;
     }
-
+    public void inicializar(int filas, int columnas, TipoNivel tipoNivel) {
+        this.filas = filas;
+        this.columnas = columnas;
+        this.tipoNivel = tipoNivel;
+        celdas = new Casilla[filas][columnas];
+        inicializarTablero(); // ya adaptado
+    }
     private void inicializarTablero() {
 
         Random rand = new Random();
