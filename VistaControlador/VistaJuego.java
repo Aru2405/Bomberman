@@ -1,5 +1,5 @@
 package VistaControlador;
-
+import Modelo.TipoNivel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -16,15 +16,15 @@ public class VistaJuego extends JFrame implements Observer {
     private JLabel[][] celdas;
     private ControladorBomberman controlador = null;
     private int frameBomberman = 0;
-    private ImageIcon fondoJuego = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png"));
     private ImageIcon bloqueBlandoIcon = new ImageIcon(getClass().getResource("/Sprites/soft1.png"));
     private ImageIcon bloqueDuroIcon = new ImageIcon(getClass().getResource("/Sprites/hard1.png"));
     private ImageIcon bombermanIcon = new ImageIcon(getClass().getResource("/Sprites/bomber1.png"));
     private ImageIcon bombermanConBomba = new ImageIcon(getClass().getResource("/Sprites/whitewithbomb1.png"));
     private ImageIcon bomba1 = new ImageIcon(getClass().getResource("/Sprites/bomb1.png"));
     private ImageIcon fuegoGif = new ImageIcon(getClass().getResource("/Sprites/miniBlast1.gif"));
+    private Image background;
     private ImageIcon enemigo = new ImageIcon(getClass().getResource("/Sprites/doria1.png"));
-    
+
     private ImageIcon[] bombermanDerecha = {
             new ImageIcon(getClass().getResource("/Sprites/whiteright1.png")),
             new ImageIcon(getClass().getResource("/Sprites/whiteright2.png")),
@@ -56,7 +56,7 @@ public class VistaJuego extends JFrame implements Observer {
             new ImageIcon(getClass().getResource("/Sprites/whitefront1.png"))
     };
 
-    private ImageIcon[] explosionBomnba = {
+    private ImageIcon[] explosionBomba = {
             new ImageIcon(getClass().getResource("/Sprites/kaBomb1.png")),
             new ImageIcon(getClass().getResource("/Sprites/kaBomb2.png")),
             new ImageIcon(getClass().getResource("/Sprites/kaBomb3.png")),
@@ -67,19 +67,34 @@ public class VistaJuego extends JFrame implements Observer {
     public VistaJuego(int filas, int columnas) {
         controlador = ControladorBomberman.getControladorBomberman();
         Tablero.getTablero().addObserver(this);
+        
+        cargarFondo(); // NUEVO: carga el fondo según el nivel
         initialize(filas, columnas);
-
+        update(null, new Object[]{"abajo", Tablero.getTablero().obtenerEstadoTablero()});
 
         this.addKeyListener(controlador);
         setFocusable(true);
         requestFocus();
         requestFocusInWindow();
-
         SwingUtilities.invokeLater(() -> this.requestFocusInWindow());
-        
-   
 
         System.out.println("KeyListener registrado: " + Arrays.toString(this.getKeyListeners()));
+    }
+    
+    private void cargarFondo() {
+        TipoNivel nivel = Modelo.Partida.getPartida().getTipoNivel(); // importa desde Modelo
+
+        switch (nivel) {
+	        case CLASSIC:
+	            background = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png")).getImage();
+	            break;
+	        case SOFT:
+	            background = new ImageIcon(getClass().getResource("/Sprites/stageBack3.png")).getImage();
+	            break;
+	        case EMPTY:
+	            background = new ImageIcon(getClass().getResource("/Sprites/stageBack2.png")).getImage();
+	            break;
+	    }
     }
 
     private void initialize(int filas, int columnas) {
@@ -90,7 +105,7 @@ public class VistaJuego extends JFrame implements Observer {
         setLayout(new BorderLayout());
 
         // Crear el panel con fondo
-        panelJuego = new PanelConFondo(fondoJuego.getImage());
+        panelJuego = new PanelConFondo(background ) ;
         panelJuego.setLayout(new GridLayout(filas, columnas));
         panelJuego.setOpaque(false);
         add(panelJuego, BorderLayout.CENTER);
@@ -162,7 +177,7 @@ public class VistaJuego extends JFrame implements Observer {
                     case 2 -> celdas[i][j].setIcon(bomba1);         
                     case 3 -> celdas[i][j].setIcon(fuegoGif);       
                     case 4 -> celdas[i][j].setIcon(bloqueDuroIcon); 
-                    case 5 -> celdas[i][j].setIcon(bloqueBlandoIcon);
+                    case 5 -> celdas[i][j].setIcon(bloqueBlandoIcon); 
                     case 6 -> celdas[i][j].setIcon(enemigo);
                 }
             }
@@ -198,8 +213,6 @@ public class VistaJuego extends JFrame implements Observer {
 
         @Override
         public void keyPressed(KeyEvent e) {
-        	
-
 
 
             int key = e.getKeyCode();
