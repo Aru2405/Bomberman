@@ -32,7 +32,7 @@ public class Bomba {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Tablero.getTablero().manejarExplosion(x, y);
+                Tablero.getTablero().manejarExplosion(x, y, true, false);
                 animarExplosion();
             }
         }, 3000);

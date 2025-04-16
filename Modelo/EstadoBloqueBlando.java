@@ -9,7 +9,7 @@ public class EstadoBloqueBlando implements EstadoCasilla {
 
     @Override
     public void alExplotar(Casilla casilla) {
-        casilla.setEstado(new EstadoExplosion()); // Se destruye y pasa a explosión
+        casilla.setEstado(new EstadoExplosion()); 
     }
 
     @Override
