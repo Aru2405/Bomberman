@@ -61,9 +61,15 @@ public class EstadoConBomba implements EstadoCasilla {
     @Override
     public void detonarBomba(Casilla casilla) {
         System.out.println("💣 Bomba detonada en casilla");
-        bomba = null;
-        casilla.setEstado(new EstadoExplosion());
+
+        EstadoExplosion explosion = new EstadoExplosion(); 
+        casilla.setEstado(explosion);
+        explosion.iniciarExplosion(casilla); 
+
+        bomba.animarExplosion();  
     }
+
+
 
     @Override
     public boolean tieneBomba() {
