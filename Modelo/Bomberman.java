@@ -7,6 +7,7 @@ public class Bomberman {
     private boolean vida;
     private String color;
     String ultimaDireccion;
+    private boolean seHaMovido = false;
 
 
     boolean ini=false;
@@ -18,6 +19,10 @@ public class Bomberman {
         this.color = color;
 
         
+    }
+    
+    public boolean seHaMovido() {
+        return seHaMovido;
     }
 
 
@@ -64,9 +69,11 @@ public class Bomberman {
             Tablero.getTablero().iniciarEnemigos();
     
     	}
-        
+        seHaMovido = true;
+
         Tablero.getTablero().getCasilla(x, y).colocarBomberman(this);
         Tablero.getTablero().notificarCambio();
+        seHaMovido = false;
     }
 
     public int getX() {
