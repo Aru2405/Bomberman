@@ -181,16 +181,17 @@ public class VistaJuego extends JFrame implements Observer {
         Object[] data = (Object[]) arg;
         String direccion = (String) data[0];
         int[][] estadoTablero = (int[][]) data[1]; 
+        boolean movido = (boolean) data[2]; 
 
         if (direccion == null) direccion = "abajo";
 
-        actualizarVista(estadoTablero, direccion);
+        actualizarVista(estadoTablero, direccion,movido);
     }
     }
 
 
     
-    private void actualizarVista(int[][] estadoTablero, String ultimaDireccion) {
+    private void actualizarVista(int[][] estadoTablero, String ultimaDireccion, boolean movido) {
         for (int i = 0; i < celdas.length; i++) {
             for (int j = 0; j < celdas[i].length; j++) {
                 int valor = estadoTablero[i][j];
@@ -210,8 +211,17 @@ public class VistaJuego extends JFrame implements Observer {
                             default -> new ImageIcon[]{bombermanIcon};
                         };
 
+                        int frame;
+                        if (movido) {
+                            frame = frameBomberman % sprites.length;
+                            frameBomberman++; 
+                        } else {
+                            frame = 0; 
+                        }
 
-                        celdas[i][j].setIcon(sprites[frameBomberman % sprites.length]);
+                        celdas[i][j].setIcon(sprites[frame]);
+
+                        //celdas[i][j].setIcon(sprites[frameBomberman % sprites.length]);
                     }
                     case 2 -> celdas[i][j].setIcon(bomba1);         
                     case 3 -> celdas[i][j].setIcon(fuegoGif);       
