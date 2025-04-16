@@ -198,29 +198,18 @@ public class VistaJuego extends JFrame implements Observer {
                 switch (valor) {
                     case 0 -> celdas[i][j].setIcon(null); 
                     case 1 -> {
-                        boolean esNegro = "Negro".equals(colorJugador);
-                        boolean estaQuieto = Tablero.getTablero().getBomberman().estaQuieto();
+                    	 boolean esNegro = "Negro".equals(colorJugador);
 
-                        ImageIcon[] sprites;
-                        
-                        if (estaQuieto) {
-                            // Mostrar solo el primer sprite de la dirección
-                            sprites = switch (ultimaDireccion) {
-                                case "arriba"    -> new ImageIcon[]{ esNegro ? bombermanNegroArriba[0]    : bombermanArriba[0] };
-                                case "abajo"     -> new ImageIcon[]{ esNegro ? bombermanNegroAbajo[0]     : bombermanAbajo[0] };
-                                case "izquierda" -> new ImageIcon[]{ esNegro ? bombermanNegroIzquierda[0] : bombermanIzquierda[0] };
-                                case "derecha"   -> new ImageIcon[]{ esNegro ? bombermanNegroDerecha[0]   : bombermanDerecha[0] };
-                                default          -> new ImageIcon[]{ bombermanIcon };
-                            };
-                        } else {
-                            sprites = switch (ultimaDireccion) {
-                                case "arriba"    -> esNegro ? bombermanNegroArriba    : bombermanArriba;
-                                case "abajo"     -> esNegro ? bombermanNegroAbajo     : bombermanAbajo;
-                                case "izquierda" -> esNegro ? bombermanNegroIzquierda : bombermanIzquierda;
-                                case "derecha"   -> esNegro ? bombermanNegroDerecha   : bombermanDerecha;
-                                default          -> new ImageIcon[]{ bombermanIcon };
-                            };
-                        }
+
+                    
+                        ImageIcon[] sprites = switch (ultimaDireccion) {
+                            case "arriba" -> esNegro ? bombermanNegroArriba : bombermanArriba;
+                            case "abajo" -> esNegro ? bombermanNegroAbajo : bombermanAbajo;
+                            case "izquierda" -> esNegro ? bombermanNegroIzquierda : bombermanIzquierda;
+                            case "derecha" -> esNegro ? bombermanNegroDerecha : bombermanDerecha;
+                            default -> new ImageIcon[]{bombermanIcon};
+                        };
+
 
                         celdas[i][j].setIcon(sprites[frameBomberman % sprites.length]);
                     }
@@ -232,10 +221,7 @@ public class VistaJuego extends JFrame implements Observer {
                 }
             }
         }
-        
-        if (Tablero.getTablero().getBomberman().estaQuieto()) {
-            frameBomberman = 0; // Resetea la animación cuando está quieto
-        }
+    
         frameBomberman++;
         panelJuego.revalidate();
         panelJuego.repaint();
