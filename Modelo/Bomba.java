@@ -51,13 +51,18 @@ public class Bomba {
 
         Timer explosionTimer = new Timer();
         explosionTimer.schedule(new TimerTask() {
-
             @Override
             public void run() {
                 if (frame >= 5) {
                     finalizarExplosion();
 
+                    Casilla casilla = Tablero.getTablero().getCasilla(x, y);
+                    if (casilla.getEstado() instanceof EstadoExplosion || casilla.getEstado() instanceof EstadoConBomba) {
+                        casilla.setEstado(new EstadoVacio());
+                    }
+
                     Tablero.getTablero().eliminarBomba(x, y);
+                    Tablero.getTablero().notificarCambio();
                     explosionTimer.cancel();
                 } else {
                     frame++;
@@ -66,4 +71,5 @@ public class Bomba {
             }
         }, 0, 400);
     }
+
 }
