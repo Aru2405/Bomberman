@@ -312,7 +312,4 @@ public class Tablero extends Observable {
         notificarCambio();
         iniciarEnemigos();
     }
-    public boolean estaQuieto() {
-        return bomberman.estaQuieto();
-    }
 }
