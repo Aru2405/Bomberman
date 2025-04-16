@@ -1,6 +1,14 @@
 package Modelo;
 
 public class NivelesFactory {
+	private static NivelesFactory misNiveles;
+	private NivelesFactory() {}
+	public static NivelesFactory getmisNiveles() {
+		if (misNiveles==null) {
+			misNiveles=new NivelesFactory();
+		}
+		return misNiveles;
+	}
 
     public static ConfiguradorNivel crearConfigurador(String tipo) {
         return switch (tipo.toUpperCase()) {
