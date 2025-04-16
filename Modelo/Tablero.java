@@ -137,7 +137,7 @@ public class Tablero extends Observable {
                 enemigo.detener();
                 enemigos.removeIf(e -> e.getX() == enemigo.getX() && e.getY() == enemigo.getY());
                 cas.eliminarEnemigo();
-                System.out.println("💀 Enemigo eliminado en (" + x + "," + y + ")");
+                System.out.println("💀 Enemigo eliminado en (" + enemigo.getX() + "," + enemigo.getY() + ")");
             }
 
             if (bomberman.getX() == nuevaX && bomberman.getY() == nuevaY) {
@@ -227,7 +227,7 @@ public class Tablero extends Observable {
 
     public void notificarCambio() {
         setChanged();
-        notifyObservers(new Object[]{bomberman.getUltimaDireccion(), obtenerEstadoTablero()});
+        notifyObservers(new Object[]{bomberman.getUltimaDireccion(), obtenerEstadoTablero(), bomberman.seHaMovido()});
     }
 
     public int contarBombasActivas() {
