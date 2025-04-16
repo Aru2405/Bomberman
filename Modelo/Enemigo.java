@@ -7,6 +7,7 @@ public class Enemigo {
     private EstrategiaMovimiento estrategiaMovimiento;
     private int x, y;
     private Timer timer;
+    private  boolean activo;
 
     public Enemigo(int x, int y) {
         this.x = x;
@@ -15,6 +16,8 @@ public class Enemigo {
     }
 
     public void iniciar() {
+        if (activo || timer != null) return; 
+        activo = true;
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -58,10 +61,11 @@ public class Enemigo {
     public void detener() {
         if (timer != null) {
             timer.cancel();
-            timer.purge();
             timer = null;
         }
+        activo = false;
     }
+
 
     public int getX() {
         return x;
