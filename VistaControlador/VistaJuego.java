@@ -1,5 +1,4 @@
 package VistaControlador;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -16,14 +15,20 @@ public class VistaJuego extends JFrame implements Observer {
     private JLabel[][] celdas;
     private ControladorBomberman controlador = null;
     private int frameBomberman = 0;
-    private ImageIcon fondoJuego = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png"));
     private ImageIcon bloqueBlandoIcon = new ImageIcon(getClass().getResource("/Sprites/soft1.png"));
     private ImageIcon bloqueDuroIcon = new ImageIcon(getClass().getResource("/Sprites/hard1.png"));
     private ImageIcon bombermanIcon = new ImageIcon(getClass().getResource("/Sprites/bomber1.png"));
     private ImageIcon bombermanConBomba = new ImageIcon(getClass().getResource("/Sprites/whitewithbomb1.png"));
     private ImageIcon bomba1 = new ImageIcon(getClass().getResource("/Sprites/bomb1.png"));
     private ImageIcon fuegoGif = new ImageIcon(getClass().getResource("/Sprites/miniBlast1.gif"));
-
+    private Image background;
+    private ImageIcon enemigo = new ImageIcon(getClass().getResource("/Sprites/doria1.png"));
+    private int filas=11;
+    private int columnas=17;
+    private String colorJugador;    
+    private String tipoNivel; 
+    
+    
     private ImageIcon[] bombermanDerecha = {
             new ImageIcon(getClass().getResource("/Sprites/whiteright1.png")),
             new ImageIcon(getClass().getResource("/Sprites/whiteright2.png")),
@@ -55,7 +60,7 @@ public class VistaJuego extends JFrame implements Observer {
             new ImageIcon(getClass().getResource("/Sprites/whitefront1.png"))
     };
 
-    private ImageIcon[] explosionBomnba = {
+    private ImageIcon[] explosionBomba = {
             new ImageIcon(getClass().getResource("/Sprites/kaBomb1.png")),
             new ImageIcon(getClass().getResource("/Sprites/kaBomb2.png")),
             new ImageIcon(getClass().getResource("/Sprites/kaBomb3.png")),
@@ -63,22 +68,65 @@ public class VistaJuego extends JFrame implements Observer {
             new ImageIcon(getClass().getResource("/Sprites/kaBomb5.png"))
     };
 
-    public VistaJuego(int filas, int columnas) {
+    private ImageIcon[] bombermanNegroDerecha = {
+        new ImageIcon(getClass().getResource("/Sprites/blackright1.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackright2.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackright3.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackright4.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackright5.png"))
+    };
+    
+    private ImageIcon[] bombermanNegroIzquierda = {
+        new ImageIcon(getClass().getResource("/Sprites/blackleft1.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackleft2.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackleft3.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackleft4.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackleft5.png"))
+    };
+    
+    private ImageIcon[] bombermanNegroArriba = {
+        new ImageIcon(getClass().getResource("/Sprites/blackup1.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackup2.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackup3.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackup4.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackup5.png"))
+    };
+    
+    private ImageIcon[] bombermanNegroAbajo = {
+        new ImageIcon(getClass().getResource("/Sprites/blackdown1.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackdown2.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackdown3.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackdown4.png")),
+        new ImageIcon(getClass().getResource("/Sprites/blackfront1.png"))
+    };
+    
+
+    public VistaJuego(String color, String tipoM) {
+        this.colorJugador = color;
+        this.tipoNivel = tipoM;
         controlador = ControladorBomberman.getControladorBomberman();
         Tablero.getTablero().addObserver(this);
+        
+        cargarFondo(); 
         initialize(filas, columnas);
-
 
         this.addKeyListener(controlador);
         setFocusable(true);
         requestFocus();
         requestFocusInWindow();
-
         SwingUtilities.invokeLater(() -> this.requestFocusInWindow());
-        
-   
 
         System.out.println("KeyListener registrado: " + Arrays.toString(this.getKeyListeners()));
+        
+    }
+    
+    private void cargarFondo() {
+    	 switch (tipoNivel) {
+         case "CLASSIC" -> background = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png")).getImage();
+         case "SOFT"    -> background = new ImageIcon(getClass().getResource("/Sprites/stageBack3.png")).getImage();
+         case "EMPTY"   -> background = new ImageIcon(getClass().getResource("/Sprites/stageBack2.png")).getImage();
+         default        -> background = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png")).getImage(); // fallback
+     }
     }
 
     private void initialize(int filas, int columnas) {
@@ -89,7 +137,7 @@ public class VistaJuego extends JFrame implements Observer {
         setLayout(new BorderLayout());
 
         // Crear el panel con fondo
-        panelJuego = new PanelConFondo(fondoJuego.getImage());
+        panelJuego = new PanelConFondo(background ) ;
         panelJuego.setLayout(new GridLayout(filas, columnas));
         panelJuego.setOpaque(false);
         add(panelJuego, BorderLayout.CENTER);
@@ -149,23 +197,45 @@ public class VistaJuego extends JFrame implements Observer {
     
                 switch (valor) {
                     case 0 -> celdas[i][j].setIcon(null); 
-                    case 1 -> { 
-                        switch (ultimaDireccion) {
-                            case "arriba" -> celdas[i][j].setIcon(bombermanArriba[frameBomberman % bombermanArriba.length]);
-                            case "abajo" -> celdas[i][j].setIcon(bombermanAbajo[frameBomberman % bombermanAbajo.length]);
-                            case "izquierda" -> celdas[i][j].setIcon(bombermanIzquierda[frameBomberman % bombermanIzquierda.length]);
-                            case "derecha" -> celdas[i][j].setIcon(bombermanDerecha[frameBomberman % bombermanDerecha.length]);
-                            default -> celdas[i][j].setIcon(bombermanIcon);
+                    case 1 -> {
+                        boolean esNegro = "Negro".equals(colorJugador);
+                        boolean estaQuieto = Tablero.getTablero().getBomberman().estaQuieto();
+
+                        ImageIcon[] sprites;
+                        
+                        if (estaQuieto) {
+                            // Mostrar solo el primer sprite de la dirección
+                            sprites = switch (ultimaDireccion) {
+                                case "arriba"    -> new ImageIcon[]{ esNegro ? bombermanNegroArriba[0]    : bombermanArriba[0] };
+                                case "abajo"     -> new ImageIcon[]{ esNegro ? bombermanNegroAbajo[0]     : bombermanAbajo[0] };
+                                case "izquierda" -> new ImageIcon[]{ esNegro ? bombermanNegroIzquierda[0] : bombermanIzquierda[0] };
+                                case "derecha"   -> new ImageIcon[]{ esNegro ? bombermanNegroDerecha[0]   : bombermanDerecha[0] };
+                                default          -> new ImageIcon[]{ bombermanIcon };
+                            };
+                        } else {
+                            sprites = switch (ultimaDireccion) {
+                                case "arriba"    -> esNegro ? bombermanNegroArriba    : bombermanArriba;
+                                case "abajo"     -> esNegro ? bombermanNegroAbajo     : bombermanAbajo;
+                                case "izquierda" -> esNegro ? bombermanNegroIzquierda : bombermanIzquierda;
+                                case "derecha"   -> esNegro ? bombermanNegroDerecha   : bombermanDerecha;
+                                default          -> new ImageIcon[]{ bombermanIcon };
+                            };
                         }
+
+                        celdas[i][j].setIcon(sprites[frameBomberman % sprites.length]);
                     }
                     case 2 -> celdas[i][j].setIcon(bomba1);         
                     case 3 -> celdas[i][j].setIcon(fuegoGif);       
                     case 4 -> celdas[i][j].setIcon(bloqueDuroIcon); 
                     case 5 -> celdas[i][j].setIcon(bloqueBlandoIcon); 
+                    case 6 -> celdas[i][j].setIcon(enemigo);
                 }
             }
         }
-    
+        
+        if (Tablero.getTablero().getBomberman().estaQuieto()) {
+            frameBomberman = 0; // Resetea la animación cuando está quieto
+        }
         frameBomberman++;
         panelJuego.revalidate();
         panelJuego.repaint();
