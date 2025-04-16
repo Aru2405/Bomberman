@@ -4,7 +4,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 public class EstadoBloqueBlando implements EstadoCasilla {
-
+    private BloqueBlando bloqueBlando;
     private static final Icon icono = new ImageIcon(EstadoBloqueBlando.class.getResource("/Sprites/soft1.png"));
 
     @Override
