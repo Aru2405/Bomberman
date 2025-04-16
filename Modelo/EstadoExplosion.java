@@ -1,5 +1,8 @@
 package Modelo;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -50,6 +53,13 @@ public class EstadoExplosion implements EstadoCasilla {
 
     @Override
     public void iniciarExplosion(Casilla casilla) {
+    	Timer timer = new Timer();
+    	timer.schedule(new TimerTask() {
+    	    public void run() {
+    	        casilla.setEstado(new EstadoVacio());
+    	    }
+    	}, 2000);
+
     }
 
     @Override
