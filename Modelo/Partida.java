@@ -23,7 +23,7 @@ public class Partida extends Observable {
     }
 
     public void inicializar() {
-    	ConfiguradorNivel configurador = NivelesFactory.crearConfigurador(tipoNivel);
+    	ConfiguradorNivel configurador = NivelesFactory.getmisNiveles().crearConfigurador(tipoNivel);
     	configurador.configurar(); // Aquí ya se llama al Tablero.getTablero().inicializar(...) desde el nivel correspondiente
     }
 
@@ -58,10 +58,10 @@ public class Partida extends Observable {
     public String getTipoNivel() {
         return tipoNivel;
     }
-
     public void setTipoNivel(String tipoNivel) {
         this.tipoNivel = tipoNivel;
         setChanged();
         notifyObservers(new Object[] { colorJugador, tipoNivel });
     }
+
 }
