@@ -24,31 +24,38 @@ public class Bomberman {
     public boolean seHaMovido() {
         return seHaMovido;
     }
-
-
+    
     public void moverse(int dx, int dy) {   
         int nuevaX = this.x + dx;
         int nuevaY = this.y + dy;
 
+        Tablero tablero = Tablero.getTablero();
+        int filas = tablero.getCeldas().length;
+        int columnas = tablero.getCeldas()[0].length;
 
-        //Verificar posicion valida
-        if (!Tablero.getTablero().esValida(nuevaX, nuevaY)) {
-            return;
+        if (Partida.getPartida().getTipoNivel() == "EMPTY") {
+            if (nuevaX < 0) nuevaX = filas - 1;
+            else if (nuevaX >= filas) nuevaX = 0;
+
+            if (nuevaY < 0) nuevaY = columnas - 1;
+            else if (nuevaY >= columnas) nuevaY = 0;
+        } else {
+            if (!tablero.esValida(nuevaX, nuevaY)) {
+                return;
+            }
         }
-
-        // Verificar obstaculo en medio
+        // Verificar obstáculo en medio
         Casilla casillaDestino = Tablero.getTablero().getCasilla(nuevaX, nuevaY);
         if (casillaDestino.tieneBloqueDuro() || casillaDestino.tieneBloqueBlando() || casillaDestino.tieneBomba()) {
             return;
         }
-        
+
         if (casillaDestino.tieneEnemigo()) {
             morir();
+            return;
         }
-        
-        
-        
-        //guardar la ultima direccion para la animacion
+
+        // Guardar la última dirección para la animación
         if (dx == -1) {
             ultimaDireccion = "arriba";
         } else if (dx == 1) {
@@ -58,23 +65,26 @@ public class Bomberman {
         } else if (dy == 1) {
             ultimaDireccion = "derecha";
         }
-        
-        Tablero.getTablero().getCasilla(this.x,this.y).eliminarBomberman();
-        //Si la casilla esta libre, mover a Bomberman y actualizar Tablero
+
+        // Mover al Bomberman
+        Tablero.getTablero().getCasilla(this.x, this.y).eliminarBomberman();
         this.x = nuevaX;
         this.y = nuevaY;
 
-    	if (ini== false){
-    		ini= true;
+        if (!ini) {
+            ini = true;
             Tablero.getTablero().iniciarEnemigos();
-    
-    	}
-        seHaMovido = true;
+        }
 
+        seHaMovido = true;
         Tablero.getTablero().getCasilla(x, y).colocarBomberman(this);
         Tablero.getTablero().notificarCambio();
         seHaMovido = false;
     }
+
+
+
+   
 
     public int getX() {
         return x;
