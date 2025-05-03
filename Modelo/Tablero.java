@@ -43,7 +43,7 @@ public class Tablero extends Observable {
             }
         }
 
-        enemigos.clear(); // Por si hay reinicio
+        enemigos.clear(); 
     }
 
     public void aplicarConfiguracion(ConfiguradorNivel configurador) {
@@ -302,8 +302,18 @@ public class Tablero extends Observable {
                 !posible.tieneBomberman() &&
                 !posible.tieneEnemigo()) {
 
-                Enemigo enemigo = new Enemigo(x, y);
-                enemigo.cambiarEstrategia(new MovimientoAleatorio());
+            	Enemigo enemigo = new Enemigo(x, y);
+            	int tipo = rand.nextInt(4); 
+            	EstrategiaMovimiento estrategia;
+            	switch (tipo) {
+            	    case 0 -> estrategia = new MovimientoAleatorio();
+            	    case 1 -> estrategia = new MovimientoDoble();
+            	    case 2 -> estrategia = new MovimientoQuieto();
+            	    default -> estrategia = new MovimientoAStar(enemigo); 
+            	}
+
+
+                enemigo.cambiarEstrategia(estrategia);
                 añadirEnemigo(enemigo);
                 enemigosColocados++;
             }
