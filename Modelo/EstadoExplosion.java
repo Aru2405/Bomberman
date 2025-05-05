@@ -10,9 +10,20 @@ public class EstadoExplosion implements EstadoCasilla {
 
     private static final Icon icono = new ImageIcon(EstadoExplosion.class.getResource("/Sprites/miniBlast1.gif"));
 
+    private TimerTask tarea(Runnable r) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                r.run();
+            }
+        };
+    }
+
+    
     @Override
     public void alExplotar(Casilla casilla) {
     }
+    
 
     @Override
     public boolean esTransitable() {
@@ -54,11 +65,8 @@ public class EstadoExplosion implements EstadoCasilla {
     @Override
     public void iniciarExplosion(Casilla casilla) {
     	Timer timer = new Timer();
-    	timer.schedule(new TimerTask() {
-    	    public void run() {
-    	        casilla.setEstado(new EstadoVacio());
-    	    }
-    	}, 2000);
+    	timer.schedule(tarea(() -> casilla.setEstado(new EstadoVacio())), 2000);
+
 
     }
 
