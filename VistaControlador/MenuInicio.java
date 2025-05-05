@@ -13,14 +13,11 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.stream.IntStream;
 
-
-
 public class MenuInicio implements Observer {
 
     private JFrame frame;
     private static MenuInicio instancia;
     private ControladorMenuInicio controlador;
-
 
     public static void mostrarMenu() {
         if (instancia == null) {
@@ -81,7 +78,6 @@ public class MenuInicio implements Observer {
                     break;
             }
 
-
             JLabel labelImagen = new JLabel(new ImageIcon(MenuInicio.class.getResource(path)), SwingConstants.CENTER);
             panel.add(labelImagen, BorderLayout.CENTER);
 
@@ -89,12 +85,11 @@ public class MenuInicio implements Observer {
             labelTexto.setFont(new Font("Arial", Font.BOLD, 16));
             panel.add(labelTexto, BorderLayout.SOUTH);
 
-           // panel.addMouseListener(new ControladorMenuInicio(tipoNivel, panel));
-             panel.addMouseListener(new ControladorMenuInicio(tipoNivel, panel));
+            panel.addMouseListener(new ControladorMenuInicio(tipoNivel, panel));
 
             gbc.gridx = i;
             panelPrincipal.add(panel, gbc);
-        }
+        }); // <-- este paréntesis faltaba
 
         frame.setContentPane(panelPrincipal);
         frame.setVisible(true);
@@ -113,7 +108,6 @@ public class MenuInicio implements Observer {
             }
         }
     }
-
 
     static class JPanelConFondo extends JPanel {
         private final Image fondo;
@@ -134,13 +128,6 @@ public class MenuInicio implements Observer {
         }
     }
 
-    
-    
-    
-    
-
-
-
     private class ControladorMenuInicio implements MouseListener {
         private final String tipoNivel;
         private final JPanel panel;
@@ -153,8 +140,7 @@ public class MenuInicio implements Observer {
         @Override
         public void mouseClicked(MouseEvent e) {
             Partida.getPartida().setTipoNivel(tipoNivel);
-            Partida.getPartida().inicializar(); 
-
+            Partida.getPartida().inicializar();
         }
 
         @Override public void mousePressed(MouseEvent e) {}

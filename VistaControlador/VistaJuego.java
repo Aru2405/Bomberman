@@ -219,7 +219,7 @@ public class VistaJuego extends JFrame implements Observer {
 
         actualizarVista(estadoTablero, direccion,movido);
     }
-    new VistaRanking();
+    //new VistaRanking();
     }
 
 

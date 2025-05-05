@@ -1,5 +1,7 @@
 package Modelo;
 
+import java.util.stream.Stream;
+
 public class Bomberman {
 	
     private int x;
@@ -46,9 +48,16 @@ public class Bomberman {
         }
         // Verificar obstáculo en medio
         Casilla casillaDestino = Tablero.getTablero().getCasilla(nuevaX, nuevaY);
-        if (casillaDestino.tieneBloqueDuro() || casillaDestino.tieneBloqueBlando() || casillaDestino.tieneBomba()) {
+        boolean hayObstaculo = Stream.of(
+        casillaDestino.tieneBloqueDuro(),
+        casillaDestino.tieneBloqueBlando(),
+        casillaDestino.tieneBomba()
+        ).anyMatch(Boolean::booleanValue);
+
+        if (hayObstaculo) {
             return;
         }
+
 
         if (casillaDestino.tieneEnemigo()) {
             morir();

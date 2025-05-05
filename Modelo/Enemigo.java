@@ -2,6 +2,7 @@ package Modelo;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Stream;
 
 public class Enemigo {
     private EstrategiaMovimiento estrategiaMovimiento;
@@ -42,8 +43,14 @@ public class Enemigo {
                 return;
             }
 
-            if (!destino.tieneBloqueDuro() && !destino.tieneBloqueBlando() &&
-                    !destino.tieneBomba() && !destino.tieneEnemigo()) {
+            boolean libre = Stream.of(
+            !destino.tieneBloqueDuro(),
+            !destino.tieneBloqueBlando(),
+            !destino.tieneBomba(),
+            !destino.tieneEnemigo()
+            ).allMatch(Boolean::booleanValue);
+
+            if (libre) {
                 actual.eliminarEnemigo();
                 this.x = nuevaX;
                 this.y = nuevaY;
