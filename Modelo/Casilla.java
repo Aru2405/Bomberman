@@ -1,5 +1,7 @@
 package Modelo;
 
+import java.util.Objects;
+
 public class Casilla {
     private EstadoCasilla estado;
     private Bomberman bomberman;
@@ -19,7 +21,6 @@ public class Casilla {
         return estado;
     }
 
-    // Métodos delegados al estado
     public void colocarBomba(Bomba b) {
         estado.colocarBomba(this, b);
     }
@@ -64,7 +65,6 @@ public class Casilla {
         return estado instanceof EstadoBloqueDuro;
     }
 
-    // Gestión de Bomberman
     public void colocarBomberman(Bomberman b) {
         this.bomberman = b;
     }
@@ -74,7 +74,8 @@ public class Casilla {
     }
 
     public boolean tieneBomberman() {
-        return this.bomberman != null;
+	    return Objects.nonNull(this.bomberman);
+
     }
 
     public Bomberman getBomberman() {
@@ -91,7 +92,7 @@ public class Casilla {
     }
 
     public boolean tieneEnemigo() {
-        return enemigo != null;
+	    return Objects.nonNull(this.enemigo);
     }
 
     public Enemigo getEnemigo() {
