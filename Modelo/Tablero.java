@@ -3,7 +3,9 @@ package Modelo;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.List;
 
@@ -16,6 +18,7 @@ public class Tablero extends Observable {
     private Bomberman bomberman;
     private Timer timer = new Timer();
     private List<Enemigo> enemigos = new ArrayList<>();
+
 
     private Tablero() {
         this.celdas = new Casilla[filas][columnas];
@@ -150,19 +153,17 @@ public class Tablero extends Observable {
         fuegoEnemigos.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                List<Enemigo> eliminados = new ArrayList<>();
+            	List<Enemigo> eliminados = enemigos.stream()
+            		    .filter(e -> getCasilla(e.getX(), e.getY()).estaEnExplosion())
+            		    .peek(e -> {
+            		        e.detener();
+            		        getCasilla(e.getX(), e.getY()).eliminarEnemigo();
+            		        System.out.println("💥 Enemigo murió por fuego en (" + e.getX() + "," + e.getY() + ")");
+            		    })
+            		    .collect(Collectors.toList());
 
-                for (Enemigo enemigo : new ArrayList<>(enemigos)) {
-                    Casilla casilla = getCasilla(enemigo.getX(), enemigo.getY());
-                    if (casilla.estaEnExplosion()) {
-                        enemigo.detener();
-                        eliminados.add(enemigo);
-                        casilla.eliminarEnemigo();
-                        System.out.println("💥 Enemigo murió por fuego en (" + enemigo.getX() + "," + enemigo.getY() + ")");
-                    }
-                }
+            		enemigos.removeAll(eliminados);
 
-                enemigos.removeAll(eliminados);
             }
         }, 0, 200);
 
@@ -216,9 +217,8 @@ public class Tablero extends Observable {
     }
 
     public void iniciarEnemigos() {
-        for (Enemigo enemigo : getEnemigos()) {
-            enemigo.iniciar();
-        }
+    	getEnemigos().forEach(Enemigo::iniciar);
+
     }
 
     public Bomberman getBomberman() {
@@ -231,15 +231,12 @@ public class Tablero extends Observable {
     }
 
     public int contarBombasActivas() {
-        int contador = 0;
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {
-                if (celdas[i][j].tieneBomba()) {
-                    contador++;
-                }
-            }
-        }
-        return contador;
+    	return Arrays.stream(celdas)
+    		    .flatMap(Arrays::stream)
+    		    .filter(Casilla::tieneBomba)
+    		    .mapToInt(c -> 1)
+    		    .sum();
+
     }
 
     public int[][] obtenerEstadoTablero() {
@@ -271,15 +268,12 @@ public class Tablero extends Observable {
     }
 
     public int contarBloquesBlandos() {
-        int contador = 0;
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {
-                if (celdas[i][j].tieneBloqueBlando()) {
-                    contador++;
-                }
-            }
-        }
-        return contador;
+    	return Arrays.stream(celdas)
+    		    .flatMap(Arrays::stream)
+    		    .filter(Casilla::tieneBloqueBlando)
+    		    .mapToInt(c -> 1)
+    		    .sum();
+
     }
     public void colocarElementosIniciales() {
         Casilla casillaInicial = celdas[bomberman.getX()][bomberman.getY()];
@@ -306,11 +300,20 @@ public class Tablero extends Observable {
             	int tipo = rand.nextInt(4); 
             	EstrategiaMovimiento estrategia;
             	switch (tipo) {
-            	    case 0 -> estrategia = new MovimientoAleatorio();
-            	    case 1 -> estrategia = new MovimientoDoble();
-            	    case 2 -> estrategia = new MovimientoQuieto();
-            	    default -> estrategia = new MovimientoAStar(enemigo); 
+            	    case 0:
+            	        estrategia = new MovimientoAleatorio();
+            	        break;
+            	    case 1:
+            	        estrategia = new MovimientoDoble();
+            	        break;
+            	    case 2:
+            	        estrategia = new MovimientoQuieto();
+            	        break;
+            	    default:
+            	        estrategia = new MovimientoAStar(enemigo);
+            	        break;
             	}
+
 
 
                 enemigo.cambiarEstrategia(estrategia);
@@ -321,5 +324,7 @@ public class Tablero extends Observable {
 
         notificarCambio();
         iniciarEnemigos();
+
     }
+
 }
