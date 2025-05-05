@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.IntStream;
 
 
 
@@ -47,7 +48,7 @@ public class MenuInicio implements Observer {
 
         String[] niveles = { "CLASSIC", "SOFT", "EMPTY" };
 
-        for (int i = 0; i < niveles.length; i++) {
+        IntStream.range(0, niveles.length).forEach(i -> {
             String tipoNivel = niveles[i];
 
             JPanel panel = new JPanel(new BorderLayout()) {
@@ -64,12 +65,22 @@ public class MenuInicio implements Observer {
             panel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2));
             panel.setOpaque(true);
 
-            String path = switch (tipoNivel) {
-                case "CLASSIC" -> "/Sprites/stageBack1.png";
-                case "SOFT" -> "/Sprites/stageBack3.png";
-                case "EMPTY" -> "/Sprites/stageBack2.png";
-                default -> "/Sprites/stageBack1.png";
-            };
+            String path;
+            switch (tipoNivel) {
+                case "CLASSIC":
+                    path = "/Sprites/stageBack1.png";
+                    break;
+                case "SOFT":
+                    path = "/Sprites/stageBack3.png";
+                    break;
+                case "EMPTY":
+                    path = "/Sprites/stageBack2.png";
+                    break;
+                default:
+                    path = "/Sprites/stageBack1.png";
+                    break;
+            }
+
 
             JLabel labelImagen = new JLabel(new ImageIcon(MenuInicio.class.getResource(path)), SwingConstants.CENTER);
             panel.add(labelImagen, BorderLayout.CENTER);
@@ -91,14 +102,18 @@ public class MenuInicio implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof Object[] datos && datos.length == 2) {
-            String color = (String) datos[0];
-            String tipoNivel = (String) datos[1];
+        if (arg instanceof Object[]) {
+            Object[] datos = (Object[]) arg;
+            if (datos.length == 2) {
+                String color = (String) datos[0];
+                String tipoNivel = (String) datos[1];
 
-            frame.dispose();
-            new VistaJuego(color, tipoNivel);
+                frame.dispose();
+                new VistaJuego(color, tipoNivel);
+            }
         }
     }
+
 
     static class JPanelConFondo extends JPanel {
         private final Image fondo;
@@ -138,8 +153,8 @@ public class MenuInicio implements Observer {
         @Override
         public void mouseClicked(MouseEvent e) {
             Partida.getPartida().setTipoNivel(tipoNivel);
-            Partida.getPartida().inicializar(); // <-- Aquí lanzas la configuración real del nivel
-            Tablero.getTablero().notificarCambio(); // Esto actualiza la vista
+            Partida.getPartida().inicializar(); 
+
         }
 
         @Override public void mousePressed(MouseEvent e) {}
