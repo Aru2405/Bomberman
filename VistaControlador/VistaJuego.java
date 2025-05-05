@@ -6,6 +6,11 @@ import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.IntStream;
+
+import javax.sound.sampled.*;
+import java.net.URL;
+import java.io.IOException;
 
 import Modelo.Tablero;
 
@@ -27,7 +32,7 @@ public class VistaJuego extends JFrame implements Observer {
     private int columnas=17;
     private String colorJugador;    
     private String tipoNivel; 
-    
+    private Clip musicaFondo;
     
     private ImageIcon[] bombermanDerecha = {
             new ImageIcon(getClass().getResource("/Sprites/whiteright1.png")),
@@ -119,15 +124,43 @@ public class VistaJuego extends JFrame implements Observer {
         System.out.println("KeyListener registrado: " + Arrays.toString(this.getKeyListeners()));
         
     }
+    private void reproducirMusicaFondo() {
+    	try {
+    	    URL url = getClass().getResource("/Musica/musicajuego.wav");
+    	    System.out.println("URL del archivo: " + url);
+    	    AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+    	    musicaFondo = AudioSystem.getClip();
+    	    musicaFondo.open(audioIn);
+    	    musicaFondo.loop(Clip.LOOP_CONTINUOUSLY);
+
+    	} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+    	    e.printStackTrace();
+    	}
+    }
+    /*private void detenerMusicaFondo() {
+        if (musicaFondo != null && musicaFondo.isRunning()) {
+            musicaFondo.stop();
+            musicaFondo.close();
+        }
+    }*/ //nO LO USA
     
     private void cargarFondo() {
-    	 switch (tipoNivel) {
-         case "CLASSIC" -> background = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png")).getImage();
-         case "SOFT"    -> background = new ImageIcon(getClass().getResource("/Sprites/stageBack3.png")).getImage();
-         case "EMPTY"   -> background = new ImageIcon(getClass().getResource("/Sprites/stageBack2.png")).getImage();
-         default        -> background = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png")).getImage(); // fallback
-     }
+        switch (tipoNivel) {
+            case "CLASSIC":
+                background = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png")).getImage();
+                break;
+            case "SOFT":
+                background = new ImageIcon(getClass().getResource("/Sprites/stageBack3.png")).getImage();
+                break;
+            case "EMPTY":
+                background = new ImageIcon(getClass().getResource("/Sprites/stageBack2.png")).getImage();
+                break;
+            default:
+                background = new ImageIcon(getClass().getResource("/Sprites/stageBack1.png")).getImage();
+                break;
+        }
     }
+
 
     private void initialize(int filas, int columnas) {
         setTitle("Bomberman - Juego");
@@ -143,20 +176,19 @@ public class VistaJuego extends JFrame implements Observer {
         add(panelJuego, BorderLayout.CENTER);
 
         celdas = new JLabel[filas][columnas];
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {
-                celdas[i][j] = new JLabel();
-                celdas[i][j].setHorizontalAlignment(SwingConstants.CENTER);
-                celdas[i][j].setOpaque(false);
-                panelJuego.add(celdas[i][j]);
-            }
-        }
+        IntStream.range(0, filas).forEach(i ->
+        IntStream.range(0, columnas).forEach(j -> {
+            celdas[i][j] = new JLabel();
+            celdas[i][j].setHorizontalAlignment(SwingConstants.CENTER);
+            celdas[i][j].setOpaque(false);
+            panelJuego.add(celdas[i][j]);
+        })
+    );
 
-        
+
+        reproducirMusicaFondo();
         setVisible(true);
     }
-
-
 
     // Clase para el panel con fondo
     private static class PanelConFondo extends JPanel {
@@ -187,6 +219,7 @@ public class VistaJuego extends JFrame implements Observer {
 
         actualizarVista(estadoTablero, direccion,movido);
     }
+    new VistaRanking();
     }
 
 
@@ -197,39 +230,64 @@ public class VistaJuego extends JFrame implements Observer {
                 int valor = estadoTablero[i][j];
     
                 switch (valor) {
-                    case 0 -> celdas[i][j].setIcon(null); 
-                    case 1 -> {
-                    	 boolean esNegro = "Negro".equals(colorJugador);
-
-
+                case 0:
+                    celdas[i][j].setIcon(null);
+                    break;
                     
-                        ImageIcon[] sprites = switch (ultimaDireccion) {
-                            case "arriba" -> esNegro ? bombermanNegroArriba : bombermanArriba;
-                            case "abajo" -> esNegro ? bombermanNegroAbajo : bombermanAbajo;
-                            case "izquierda" -> esNegro ? bombermanNegroIzquierda : bombermanIzquierda;
-                            case "derecha" -> esNegro ? bombermanNegroDerecha : bombermanDerecha;
-                            default -> new ImageIcon[]{bombermanIcon};
-                        };
+                case 1:
+                    boolean esNegro = "Negro".equals(colorJugador);
+                    ImageIcon[] sprites;
 
-                        int frame;
-                        if (movido) {
-                            frame = frameBomberman % sprites.length;
-                            frameBomberman++; 
-                        } else {
-                            frame = 0; 
-                        }
-
-                        celdas[i][j].setIcon(sprites[frame]);
-
-                        //celdas[i][j].setIcon(sprites[frameBomberman % sprites.length]);
+                    switch (ultimaDireccion) {
+                        case "arriba":
+                            sprites = esNegro ? bombermanNegroArriba : bombermanArriba;
+                            break;
+                        case "abajo":
+                            sprites = esNegro ? bombermanNegroAbajo : bombermanAbajo;
+                            break;
+                        case "izquierda":
+                            sprites = esNegro ? bombermanNegroIzquierda : bombermanIzquierda;
+                            break;
+                        case "derecha":
+                            sprites = esNegro ? bombermanNegroDerecha : bombermanDerecha;
+                            break;
+                        default:
+                            sprites = new ImageIcon[]{bombermanIcon};
+                            break;
                     }
-                    case 2 -> celdas[i][j].setIcon(bomba1);         
-                    case 3 -> celdas[i][j].setIcon(fuegoGif);       
-                    case 4 -> celdas[i][j].setIcon(bloqueDuroIcon); 
-                    case 5 -> celdas[i][j].setIcon(bloqueBlandoIcon); 
-                    case 6 -> celdas[i][j].setIcon(enemigo);
-                }
-            }
+
+                    int frame;
+                    if (movido) {
+                        frame = frameBomberman % sprites.length;
+                        frameBomberman++;
+                    } else {
+                        frame = 0;
+                    }
+
+                    celdas[i][j].setIcon(sprites[frame]);
+                    break;
+
+                case 2:
+                    celdas[i][j].setIcon(bomba1);
+                    break;
+
+                case 3:
+                    celdas[i][j].setIcon(fuegoGif);
+                    break;
+
+                case 4:
+                    celdas[i][j].setIcon(bloqueDuroIcon);
+                    break;
+
+                case 5:
+                    celdas[i][j].setIcon(bloqueBlandoIcon);
+                    break;
+
+                case 6:
+                    celdas[i][j].setIcon(enemigo);
+                    break;
+            
+            }}
         }
     
         frameBomberman++;
@@ -238,19 +296,12 @@ public class VistaJuego extends JFrame implements Observer {
     }
     
 
-
-    
-
     private static class ControladorBomberman implements KeyListener {
         private static ControladorBomberman miControladorBomberman;
-
-
-
         private ControladorBomberman() {
             
             
         }
-
 
         public static synchronized ControladorBomberman getControladorBomberman() {
             if (miControladorBomberman == null) {
@@ -262,36 +313,31 @@ public class VistaJuego extends JFrame implements Observer {
 
         @Override
         public void keyPressed(KeyEvent e) {
-
-
             int key = e.getKeyCode();
-            switch (key) {
-                case KeyEvent.VK_UP -> {
-                   
-                	Tablero.getTablero().getBomberman().moverse(-1, 0);
-                }
-                case KeyEvent.VK_DOWN -> {
-                    
-                	Tablero.getTablero().getBomberman().moverse(1, 0);
-                }
-                case KeyEvent.VK_LEFT -> {
-                    
-                	Tablero.getTablero().getBomberman().moverse(0, -1);
-                }
-                case KeyEvent.VK_RIGHT -> {
-                   
-                	Tablero.getTablero().getBomberman().moverse(0, 1);
-                }
-                case KeyEvent.VK_SPACE -> {
-               
-                	Tablero.getTablero().getBomberman().ponerBomba();
-                }
-     
-            }
 
-        
-          
+            switch (key) {
+                case KeyEvent.VK_UP:
+                    Tablero.getTablero().getBomberman().moverse(-1, 0);
+                    break;
+
+                case KeyEvent.VK_DOWN:
+                    Tablero.getTablero().getBomberman().moverse(1, 0);
+                    break;
+
+                case KeyEvent.VK_LEFT:
+                    Tablero.getTablero().getBomberman().moverse(0, -1);
+                    break;
+
+                case KeyEvent.VK_RIGHT:
+                    Tablero.getTablero().getBomberman().moverse(0, 1);
+                    break;
+
+                case KeyEvent.VK_SPACE:
+                    Tablero.getTablero().getBomberman().ponerBomba();
+                    break;
+            }
         }
+
 
         @Override
         public void keyReleased(KeyEvent e) {
