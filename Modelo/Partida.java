@@ -51,14 +51,6 @@ public class Partida extends Observable {
         System.out.println("Actualizando el juego");
     }
 
-    public void terminarJuego() {
-        this.juegoActivo = false;
-        tiempoFin = System.currentTimeMillis();
-        guardarResultado(false, tipoNivel, colorJugador);
-        mostrarRankingVentana();
-        System.out.println("El juego ha terminado.");
-        System.exit(0);
-    }
 
     public boolean estaActivo() {
         return juegoActivo;
@@ -82,24 +74,30 @@ public class Partida extends Observable {
         setChanged();
         notifyObservers(new Object[] { colorJugador, tipoNivel });
     }
-    private void guardarResultado(boolean ganado, String tipoNivel, String colorJugador) {
-        try {
-            FileWriter fw = new FileWriter("ranking.txt", true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw);
-            long duracion = (tiempoFin - tiempoInicio) / 1000;
 
-            if (ganado) {       
-                out.println("Ganó en " + duracion + " segundos " + "en el nivel "+ tipoNivel +"con el jugador "+colorJugador);
-            } else {
-                out.println("Perdió en "+ duracion + " segundos " + "en el nivel "+ tipoNivel +"con el jugador "+colorJugador);
-            }
-
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void terminarConDerrota() {
+        this.juegoActivo = false;
+        tiempoFin = System.currentTimeMillis();
+        guardarResultado(false, tipoNivel, colorJugador);
+        Tablero.getTablero().terminarConDerrota();
+        System.out.println("☠️ Derrota");
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            mostrarRankingVentana();
+        });
     }
+    
+    public void terminarConVictoria() {
+        this.juegoActivo = false;
+        tiempoFin = System.currentTimeMillis();
+        guardarResultado(true, tipoNivel, colorJugador);
+        Tablero.getTablero().terminarConVictoria();
+        System.out.println("🏆 ¡Victoria!");
+        javax.swing.SwingUtilities.invokeLater(() -> {
+        mostrarRankingVentana();
+        });
+    }
+    
+
     private void mostrarRankingVentana() {
     	String contenido;
     	try {
@@ -118,5 +116,31 @@ public class Partida extends Observable {
        }
 
 
+    private void guardarResultado(boolean ganado, String tipoNivel, String colorJugador) {
+        try {
+
+            long duracionMilisegundos = tiempoFin - tiempoInicio;
+            
+            long segundos = duracionMilisegundos / 1000;           
+            long minutos = segundos / 60;
+            segundos = segundos % 60;
+            
+            FileWriter fw = new FileWriter("ranking.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter out = new PrintWriter(bw);
+           
+            if (ganado) {
+                out.println("Ganó en " + minutos + " minutos y " + segundos + " segundos " +
+                            "en el nivel " + tipoNivel + " con el jugador " + colorJugador);
+            } else {
+                out.println("Perdió en " + minutos + " minutos y " + segundos + " segundos " +
+                            "en el nivel " + tipoNivel + " con el jugador " + colorJugador);
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
+
