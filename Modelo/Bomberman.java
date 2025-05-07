@@ -46,7 +46,7 @@ public class Bomberman {
                 return;
             }
         }
-        // Verificar obstáculo en medio
+        // Verificar obstÃ¡culo en medio
         Casilla casillaDestino = Tablero.getTablero().getCasilla(nuevaX, nuevaY);
         boolean hayObstaculo = Stream.of(
         casillaDestino.tieneBloqueDuro(),
@@ -64,7 +64,7 @@ public class Bomberman {
             return;
         }
 
-        // Guardar la última dirección para la animación
+        // Guardar la Ãºltima direcciÃ³n para la animaciÃ³n
         if (dx == -1) {
             ultimaDireccion = "arriba";
         } else if (dx == 1) {
@@ -138,7 +138,7 @@ public class Bomberman {
     public void morir() {
     	vida= false;
         System.out.println("Bomberman ha muerto.");
-        Partida.getPartida().terminarJuego();
+        Partida.getPartida().terminarConDerrota();
     }
     
     public boolean estaVivo(){
