@@ -89,7 +89,7 @@ public class MenuInicio implements Observer {
 
             gbc.gridx = i;
             panelPrincipal.add(panel, gbc);
-        }); // <-- este paréntesis faltaba
+        }); // <-- este parÃ©ntesis faltaba
 
         frame.setContentPane(panelPrincipal);
         frame.setVisible(true);
