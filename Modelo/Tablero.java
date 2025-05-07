@@ -33,6 +33,9 @@ public class Tablero extends Observable {
         }
         return miTablero;
     }
+    public void agregarEnemigo(Enemigo enemigo) {
+        enemigos.add(enemigo);
+    }
 
     public void inicializar(int filas, int columnas) {
         this.filas = filas;
@@ -139,10 +142,8 @@ public class Tablero extends Observable {
                 enemigo.detener();
                 enemigos.removeIf(e -> e.getX() == enemigo.getX() && e.getY() == enemigo.getY());
                 cas.eliminarEnemigo();
+                comprobarVictoria();
                 System.out.println("💀 Enemigo eliminado en (" + enemigo.getX() + "," + enemigo.getY() + ")");
-               /* if (!enemigos.isEmpty()) {
-                    comprobarVictoria();
-                }*/
             }
             if (bomberman.getX() == nuevaX && bomberman.getY() == nuevaY) {
                 bomberman.morir();
@@ -220,13 +221,9 @@ public class Tablero extends Observable {
         }
     }
 
-    public List<Enemigo> getEnemigos() {
-        return enemigos;
-    }
 
     public void iniciarEnemigos() {
-    	getEnemigos().forEach(Enemigo::iniciar);
-
+    	enemigos.stream().forEach(Enemigo::iniciar);
     }
 
     public Bomberman getBomberman() {
@@ -250,11 +247,10 @@ public class Tablero extends Observable {
     }
     
     public int contarBombasActivas() {
-    	return Arrays.stream(celdas)
+    	return (int)Arrays.stream(celdas)
     		    .flatMap(Arrays::stream)
     		    .filter(Casilla::tieneBomba)
-    		    .mapToInt(c -> 1)
-    		    .sum();
+    		    .count();
 
     }
 
