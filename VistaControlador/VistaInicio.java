@@ -43,7 +43,7 @@ public class VistaInicio extends JFrame implements Observer {
         gbc.gridx = 0;
         gbc.gridwidth = 2;
 
-        // Título
+        // TÃ­tulo
         ImageIcon titulo = new ImageIcon(getClass().getResource("/Sprites/title.png"));
         JLabel tituloLabel = new JLabel(titulo);
         panelCentral.add(tituloLabel, gbc);
@@ -64,7 +64,7 @@ public class VistaInicio extends JFrame implements Observer {
         comboColor.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         panelCentral.add(comboColor, gbc);
 
-        // Botón START
+        // BotÃ³n START
         gbc.gridy = 3;
         botonComenzar = new JButton(new ImageIcon(getClass().getResource("/Sprites/start.png")));
         botonComenzar.setBorderPainted(false);
@@ -104,13 +104,12 @@ public class VistaInicio extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof String colorSeleccionado) {
+        if (arg instanceof String) {
+            String colorSeleccionado = (String) arg;
             setVisible(false);
             MenuInicio menu = new MenuInicio();
-        
         }
     }
-
 
 
     private ControladorVistaInicio getControlador() {
