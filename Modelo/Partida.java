@@ -40,6 +40,7 @@ public class Partida extends Observable {
     public void inicializar() {
     	ConfiguradorNivel configurador = NivelesFactory.crearConfigurador(tipoNivel);
     	configurador.configurar(); // Aquí ya se llama al Tablero.getTablero().inicializar(...) desde el nivel correspondiente
+    	Partida.getPartida().iniciarJuego();
     }
 
     public void iniciarJuego() {
