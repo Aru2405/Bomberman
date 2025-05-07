@@ -1,5 +1,9 @@
 package VistaControlador;
 import javax.swing.*;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -33,6 +37,16 @@ public class VistaJuego extends JFrame implements Observer {
     private String colorJugador;    
     private String tipoNivel; 
     private Clip musicaFondo;
+    
+    private JLabel timeLabel;
+    private JLabel enemiesLabel;
+    private JLabel livesLabel;
+    private JLabel levelLabel;
+
+    private int tiempoEnSegundos = 0;
+    private int enemigosRestantes;
+
+    
     
     private ImageIcon[] bombermanDerecha = {
             new ImageIcon(getClass().getResource("/Sprites/whiteright1.png")),
@@ -168,6 +182,27 @@ public class VistaJuego extends JFrame implements Observer {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+        
+        
+        //INDICE ARRIBA
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        timeLabel = new JLabel("Tiempo: 00:00");
+        enemiesLabel = new JLabel("Enemigos: " + enemigosRestantes);
+        livesLabel = new JLabel("Vidas: ❤");
+        levelLabel = new JLabel("Nivel: " + tipoNivel);
+
+        topPanel.add(timeLabel);
+        topPanel.add(Box.createHorizontalStrut(20));
+        topPanel.add(enemiesLabel);
+        topPanel.add(Box.createHorizontalStrut(20));
+        topPanel.add(livesLabel);
+        topPanel.add(Box.createHorizontalStrut(20));
+        topPanel.add(levelLabel);
+
+        add(topPanel, BorderLayout.NORTH);
+
+        iniciarTemporizador(); 
+
 
         // Crear el panel con fondo
         panelJuego = new PanelConFondo(background ) ;
@@ -189,6 +224,17 @@ public class VistaJuego extends JFrame implements Observer {
         reproducirMusicaFondo();
         setVisible(true);
     }
+	private void iniciarTemporizador() {
+        Timer timer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tiempoEnSegundos++;
+                int minutos = tiempoEnSegundos / 60;
+                int segundos = tiempoEnSegundos % 60;
+                timeLabel.setText(String.format("Tiempo: %02d:%02d", minutos, segundos));
+            }
+        });
+        timer.start();
+    }
 
     // Clase para el panel con fondo
     private static class PanelConFondo extends JPanel {
@@ -209,20 +255,46 @@ public class VistaJuego extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-    if (arg instanceof Object[]) {
-        Object[] data = (Object[]) arg;
-        String direccion = (String) data[0];
-        int[][] estadoTablero = (int[][]) data[1]; 
-        boolean movido = (boolean) data[2]; 
+	    if (arg instanceof Object[]) {
+	        Object[] data = (Object[]) arg;
+	        String direccion = (String) data[0];
+	        int[][] estadoTablero = (int[][]) data[1];
+	        enemigosRestantes = contarEnemigosInicial(estadoTablero);
+	        enemiesLabel.setText("Enemigos: " + enemigosRestantes);
+	
+	        boolean movido = (boolean) data[2]; 
+	
+	        if (direccion == null) direccion = "abajo";
+	
+	        actualizarVista(estadoTablero, direccion,movido);       
+	    }
+	    if (arg instanceof String) {
+	        String estadoJuego = (String) arg;
 
-        if (direccion == null) direccion = "abajo";
+	        if ("ganaste".equals(estadoJuego)) {
+	        	VistaRanking vistaRanking = new VistaRanking();
+	        } else if ("perdiste".equals(estadoJuego)) {
+	        	
+	        	VistaRanking vistaRanking = new VistaRanking();
 
-        actualizarVista(estadoTablero, direccion,movido);
+	        }
+	    }
+
+   
     }
-    //new VistaRanking();
+
+    private int contarEnemigosInicial(int[][] estadoTablero) {
+        int contador = 0;
+        for (int i = 0; i < estadoTablero.length; i++) {
+            for (int j = 0; j < estadoTablero[i].length; j++) {
+                if (estadoTablero[i][j] == 6) {
+                    contador++;
+                }
+            }
+        }
+        return contador;
     }
-
-
+        
     
     private void actualizarVista(int[][] estadoTablero, String ultimaDireccion, boolean movido) {
         for (int i = 0; i < celdas.length; i++) {
@@ -294,7 +366,7 @@ public class VistaJuego extends JFrame implements Observer {
         panelJuego.revalidate();
         panelJuego.repaint();
     }
-    
+
 
     private static class ControladorBomberman implements KeyListener {
         private static ControladorBomberman miControladorBomberman;
