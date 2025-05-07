@@ -22,7 +22,6 @@ public class Tablero extends Observable {
 
     private Tablero() {
         this.celdas = new Casilla[filas][columnas];
-
         String color = Partida.getPartida().getColorJugador();
         this.bomberman = new Bomberman(0, 0, color);
         System.out.println("Bomberman creado con color: " + color);
@@ -88,7 +87,7 @@ public class Tablero extends Observable {
 
     public void manejarExplosion(int x, int y, boolean simple, boolean atraviesaBloquesDuros) {
         System.out.println("💥 Explosión en (" + x + "," + y + ") | simple=" + simple + " | atraviesaBloquesDuros=" + atraviesaBloquesDuros);
-
+        
         List<int[]> direcciones = new ArrayList<>();
 
         if (simple) {
@@ -141,12 +140,15 @@ public class Tablero extends Observable {
                 enemigos.removeIf(e -> e.getX() == enemigo.getX() && e.getY() == enemigo.getY());
                 cas.eliminarEnemigo();
                 System.out.println("💀 Enemigo eliminado en (" + enemigo.getX() + "," + enemigo.getY() + ")");
+               /* if (!enemigos.isEmpty()) {
+                    comprobarVictoria();
+                }*/
             }
-
             if (bomberman.getX() == nuevaX && bomberman.getY() == nuevaY) {
                 bomberman.morir();
                 return;
             }
+
         }
 
         Timer fuegoEnemigos = new Timer();
@@ -163,11 +165,13 @@ public class Tablero extends Observable {
             		    .collect(Collectors.toList());
 
             		enemigos.removeAll(eliminados);
-
+    		
             }
+    
         }, 0, 200);
 
         notificarCambio();
+        
 
         Timer fuegoTimer = new Timer();
         fuegoTimer.scheduleAtFixedRate(new TimerTask() {
@@ -198,6 +202,10 @@ public class Tablero extends Observable {
         }, 2000);
     }
 
+    
+    
+    
+    
     public Casilla[][] getCeldas() {
         return celdas;
     }
@@ -229,7 +237,18 @@ public class Tablero extends Observable {
         setChanged();
         notifyObservers(new Object[]{bomberman.getUltimaDireccion(), obtenerEstadoTablero(), bomberman.seHaMovido()});
     }
+    public void terminarConVictoria() {
+        // Notificar que el jugador ganó
+        setChanged();
+        notifyObservers("ganaste");
+    }
 
+    public void terminarConDerrota() {
+        // Notificar que el jugador perdió
+        setChanged();
+        notifyObservers("perdiste");
+    }
+    
     public int contarBombasActivas() {
     	return Arrays.stream(celdas)
     		    .flatMap(Arrays::stream)
@@ -326,5 +345,14 @@ public class Tablero extends Observable {
         iniciarEnemigos();
 
     }
+    private void comprobarVictoria() {
+        if (enemigos.isEmpty()) {
+            System.out.println("¡HAS GANADO!");
+            Partida.getPartida().terminarConVictoria();
+            javax.swing.SwingUtilities.invokeLater(() -> {
+            });
+        }
+    }
+
 
 }
